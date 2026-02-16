@@ -17,7 +17,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         .glass-effect { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .modal-active { display: flex !important; }
-        input::placeholder { font-weight: 400; opacity: 0.4; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -28,7 +27,6 @@
             <div class="flex items-center gap-3">
                 <img src="logo.png" alt="Logo" class="w-8 h-8 rounded-lg object-cover">
                 <div>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Manager</p>
                     <h1 class="text-xl font-extrabold italic text-black">NASZC <span class="text-red-600">GSM</span></h1>
                 </div>
             </div>
@@ -108,7 +106,7 @@
                                     <th class="p-4 font-bold text-gray-400 text-[10px] uppercase">Item</th>
                                     <th class="p-4 font-bold text-gray-400 text-[10px] uppercase">Deskripsi</th>
                                     <th class="p-4 font-bold text-gray-400 text-[10px] uppercase text-center w-20">Qty</th>
-                                    <th class="p-4 font-bold text-gray-400 text-[10px] uppercase text-right w-24">Harga</th>
+                                    <th class="p-4 font-bold text-gray-400 text-[10px] uppercase text-right w-24">RM</th>
                                     <th class="w-12"></th>
                                 </tr>
                             </thead>
@@ -158,17 +156,16 @@
 
     <script>
         lucide.createIcons();
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCSg9tH4E-71u8b3oFf5j9pDvhoNHZYnZg",
-  authDomain: "invoicely-52db9.firebaseapp.com",
-  databaseURL: "https://invoicely-52db9-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "invoicely-52db9",
-  storageBucket: "invoicely-52db9.firebasestorage.app",
-  messagingSenderId: "512282448037",
-  appId: "1:512282448037:web:ad9600a2aa477c3533fd4c",
-  measurementId: "G-3M79S3P3FT"
-};
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCSg9tH4E-71u8b3oFf5j9pDvhoNHZYnZg", 
+            authDomain: "invoicely-52db9.firebaseapp.com", 
+            projectId: "invoicely-52db9", 
+            storageBucket: "invoicely-52db9.firebasestorage.app", 
+            messagingSenderId: "512282448037", 
+            appId: "1:512282448037:web:ad9600a2aa477c3533fd4c" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         let currentFilter = 'all', shareUrl = '', lastPhone = '', allInvoices = [];
 
@@ -188,9 +185,9 @@ const firebaseConfig = {
             const container = document.getElementById('invoiceContainer');
             let s = { all: 0, paid: 0, unpaid: 0 };
             allInvoices.forEach(i => { const a = parseFloat(i.total.replace(/,/g,''))||0; s.all += a; if(i.status === 'paid') s.paid += a; else s.unpaid += a; });
-            document.getElementById('stat-all').innerText = s.all.toLocaleString('en-US',{minFD:2});
-            document.getElementById('stat-paid').innerText = s.paid.toLocaleString('en-US',{minFD:2});
-            document.getElementById('stat-unpaid').innerText = s.unpaid.toLocaleString('en-US',{minFD:2});
+            document.getElementById('stat-all').innerText = s.all.toLocaleString('en-US',{minimumFractionDigits:2});
+            document.getElementById('stat-paid').innerText = s.paid.toLocaleString('en-US',{minimumFractionDigits:2});
+            document.getElementById('stat-unpaid').innerText = s.unpaid.toLocaleString('en-US',{minimumFractionDigits:2});
 
             let filtered = allInvoices;
             if(currentFilter !== 'all') filtered = filtered.filter(i => i.status === currentFilter);
