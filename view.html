@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invois Rasmi - NASZC GSM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
+        @media print { .no-print { display: none; } body { background-color: white; padding: 0; } }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div id="loader" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
+        <div class="w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+        <p class="mt-4 font-bold text-gray-400 text-xs uppercase tracking-widest">Memproses Invois...</p>
+    </div>
+
+    <div class="max-w-2xl mx-auto bg-white rounded-[32px] shadow-2xl overflow-hidden" id="invoiceContent">
+        <div class="bg-black p-8 md:p-12 text-white">
+            <div class="flex justify-between items-start mb-8">
+                <div class="flex items-center gap-4">
+                    <img src="logo.png" alt="Logo" class="w-12 h-12 rounded-xl object-cover">
+                    <div>
+                        <h1 class="text-3xl font-black italic">NASZC <span class="text-red-500">GSM</span></h1>
+                        <p class="text-[10px] opacity-60 tracking-widest uppercase mb-4">Phone Repair Specialist</p>
+                    </div>
+                </div>
+                <span id="badgeStatus" class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">...</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs opacity-80 font-medium">
+                <p class="flex items-center gap-2"><i data-lucide="map-pin" class="w-3 h-3"></i> Tasek Gelugor / Ara Kuda, Penang</p>
+                <p class="flex items-center gap-2 md:justify-end"><i data-lucide="phone" class="w-3 h-3"></i> 011-1074 1278</p>
+            </div>
+        </div>
+
+        <div class="p-8 md:p-12">
+            <div class="grid grid-cols-2 gap-8 mb-12">
+                <div><p class="text-[10px] font-bold text-gray-400 uppercase mb-2">Penerima</p><h2 id="viewCustName" class="text-xl font-extrabold text-gray-800">---</h2><p id="viewCustPhone" class="text-sm text-gray-500">---</p></div>
+                <div class="text-right"><p class="text-[10px] font-bold text-gray-400 uppercase mb-2">No. Invois</p><h2 id="viewInvNo" class="text-lg font-bold font-mono">---</h2><p id="viewDate" class="text-sm text-gray-500">---</p></div>
+            </div>
+
+            <table class="w-full mb-8">
+                <thead><tr class="border-b-2 border-gray-100 text-left"><th class="py-4 font-bold text-gray-400 text-[10px] uppercase">Item</th><th class="py-4 font-bold text-gray-400 text-[10px] uppercase text-center w-16">Qty</th><th class="py-4 font-bold text-gray-400 text-[10px] uppercase text-right w-28">Harga</th></tr></thead>
+                <tbody id="viewItemRows"></tbody>
+            </table>
+
+            <div class="flex justify-between items-center bg-gray-50 p-6 rounded-2xl mb-8">
+                <div><p class="text-[10px] font-bold text-gray-400 uppercase">Jumlah Bersih</p><p class="text-[10px] italic text-gray-400">Termasuk alat ganti & servis.</p></div>
+                <div class="text-right"><h3 class="text-3xl font-black">RM <span id="viewTotal">0.00</span></h3></div>
+            </div>
+
+            <div class="border-2 border-gray-50 rounded-2xl p-5 text-center">
+                <p class="text-[10px] font-bold text-gray-400 uppercase mb-3 italic">Nota Bayaran</p>
+                <div class="flex justify-center gap-4 text-[9px] font-black uppercase text-gray-800">
+                    <span class="border px-3 py-1 rounded-lg">Cash</span>
+                    <span class="border px-3 py-1 rounded-lg">Online Transfer</span>
+                    <span class="border px-3 py-1 rounded-lg text-orange-600 border-orange-200">SPayLater</span>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-dashed text-center text-[10px] text-gray-400 uppercase tracking-widest">Invois Rasmi NASZC GSM &copy; 2026</div>
+        </div>
+    </div>
+
+    <div class="max-w-2xl mx-auto mt-6 flex gap-3 no-print pb-10">
+        <button onclick="window.print()" class="flex-1 bg-white border py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-sm"><i data-lucide="download" class="w-5 h-5"></i> Simpan / Cetak</button>
+        <a id="btnSupport" href="#" target="_blank" class="flex-1 bg-green-500 text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg"><i data-lucide="message-circle" class="w-5 h-5"></i> Bantuan Staff</a>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script>
+        lucide.createIcons();
+        const firebaseConfig = { apiKey: "AIzaSy...", authDomain: "naszc-repair.firebaseapp.com", projectId: "naszc-repair", storageBucket: "naszc-repair.appspot.com", messagingSenderId: "...", appId: "..." };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const urlParams = new URLSearchParams(window.location.search), invoiceId = urlParams.get('id');
+
+        async function loadInvoice() {
+            if(!invoiceId) return;
+            const doc = await db.collection("invoices").doc(invoiceId).get();
+            if (!doc.exists) return;
+            const data = doc.data();
+            document.getElementById('viewCustName').innerText = data.customerName;
+            document.getElementById('viewCustPhone').innerText = data.customerPhone;
+            document.getElementById('viewInvNo').innerText = data.invoiceNo;
+            document.getElementById('viewTotal').innerText = data.total;
+            if(data.createdAt) document.getElementById('viewDate').innerText = new Date(data.createdAt.seconds * 1000).toLocaleDateString('ms-MY', {day:'numeric', month:'long', year:'numeric'});
+            
+            const b = document.getElementById('badgeStatus');
+            const p = data.status === 'paid';
+            b.innerText = p ? 'PAID' : 'UNPAID';
+            b.className = p ? 'px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-500 text-white' : 'px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-600 text-white';
+            
+            const container = document.getElementById('viewItemRows');
+            data.items.forEach(i => { container.insertAdjacentHTML('beforeend', `<tr class="border-b border-gray-50"><td class="py-5"><p class="font-bold text-gray-800 uppercase text-sm">${i.name}</p><p class="text-[11px] text-gray-400">${i.description||''}</p></td><td class="py-5 text-center font-bold text-gray-600 text-sm">${i.qty}</td><td class="py-5 text-right font-mono font-bold text-gray-800 text-sm">${parseFloat(i.price).toFixed(2)}</td></tr>`); });
+            document.getElementById('btnSupport').href = `https://wa.me/601110741278?text=Invois:${data.invoiceNo}`;
+            document.getElementById('loader').classList.add('hidden');
+        }
+        window.onload = loadInvoice;
+    </script>
+</body>
+</html>
