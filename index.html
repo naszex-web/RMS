@@ -50,7 +50,7 @@
                 </div>
                 <div>
                     <h1 class="text-[11px] font-black italic uppercase tracking-[0.25em] text-slate-900 leading-none">NASZEX <span class="text-red-600">CLOUD</span></h1>
-                    <p class="text-[7px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1.5 leading-none">RMS Management System</p>
+                    <p class="text-[7px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1.5 leading-none">Repair Management System</p>
                 </div>
             </div>
             <button onclick="refreshData(this)" class="p-2.5 bg-slate-100/50 rounded-full text-slate-400 hover:text-red-600 transition-all btn-press">
@@ -94,7 +94,7 @@
 
         <main id="reportsView" class="view-hidden">
             <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-white">
-                <table class="w-full report-table text-left">
+                <table class="w-full report-table text-left text-gray-900">
                     <thead class="bg-slate-50/50">
                         <tr><th class="pl-6">Bulan</th><th class="text-center">Klien</th><th class="text-center">Jobs</th><th class="text-right pr-6">Total (RM)</th></tr>
                     </thead>
@@ -148,7 +148,7 @@
             <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
             <div class="flex justify-between items-center mb-8">
                 <h2 id="modalTitle" class="text-xs font-black uppercase tracking-[0.3em] text-slate-900">Entry Invois</h2>
-                <button onclick="toggleModal(false)" class="p-2 bg-slate-100 rounded-xl text-slate-400 btn-press"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="toggleModal(false)" class="p-2 bg-slate-100 rounded-xl text-slate-400 btn-press"><i data-lucide="x" class="w-5 h-5 text-gray-900"></i></button>
             </div>
             
             <div class="space-y-4">
@@ -184,14 +184,26 @@
         </div>
     </div>
 
-    <div id="actionModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-md hidden flex-col justify-end">
+    <div id="actionModal" class="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-md hidden flex-col justify-end">
         <div class="bg-white rounded-t-[3rem] w-full p-8 shadow-2xl space-y-2">
             <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-6"></div>
             <p id="actionTargetName" class="text-center font-black text-sm uppercase text-slate-900 mb-6 italic tracking-tight"></p>
+            
+            <div class="p-4 bg-slate-50 rounded-2xl mb-2 text-gray-900">
+                <label class="text-[8px] font-black uppercase text-slate-400 block mb-2 tracking-widest">Repair Progress</label>
+                <select id="updateRepairStatus" onchange="updateLiveStatus(activeId, this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold outline-none">
+                    <option value="Received">1. Received</option>
+                    <option value="Diagnosis">2. Diagnosis</option>
+                    <option value="Repairing">3. Repairing</option>
+                    <option value="Ready">4. Ready for Pickup</option>
+                    <option value="Collected">5. Collected</option>
+                </select>
+            </div>
+
             <button id="btnToggleStatus" class="w-full flex items-center justify-between p-4 bg-slate-50 rounded-2xl font-bold text-xs text-slate-900 btn-press"><span>Update Bayaran</span><i data-lucide="check-circle" class="w-5 h-5 text-emerald-500"></i></button>
             <button onclick="handleAction('getlink')" class="w-full flex items-center justify-between p-4 bg-slate-50 rounded-2xl font-bold text-xs text-slate-900 btn-press"><span>Salin Link Invois</span><i data-lucide="link" class="w-4 h-4 text-blue-500"></i></button>
-            <button onclick="handleAction('edit')" class="w-full flex items-center justify-between p-4 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-xs btn-press"><span>Edit Maklumat</span><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-            <button onclick="handleAction('delete')" class="w-full flex items-center justify-between p-4 bg-rose-50 text-rose-600 rounded-2xl font-bold text-xs btn-press"><span>Padam Rekod</span><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+            <button onclick="handleAction('edit')" class="w-full flex items-center justify-between p-4 bg-indigo-50 text-indigo-600 rounded-2xl font-bold text-xs btn-press"><span>Edit Maklumat</span><i data-lucide="edit-3" class="w-5 h-5"></i></button>
+            <button onclick="handleAction('delete')" class="w-full flex items-center justify-between p-4 bg-rose-50 text-rose-600 rounded-2xl font-bold text-xs btn-press"><span>Padam Rekod</span><i data-lucide="trash-2" class="w-5 h-5"></i></button>
             <button onclick="closeActionMenu()" class="w-full p-6 font-black text-[10px] text-slate-400 uppercase text-center mt-2 tracking-[0.3em]">Tutup</button>
         </div>
     </div>
@@ -227,7 +239,10 @@
             document.getElementById(p + 'View').classList.remove('view-hidden');
             
             const navMap = {dashboard: 'nav-dash', reports: 'nav-report', profit: 'nav-profit'};
-            Object.values(navMap).forEach(id => document.getElementById(id).classList.replace('text-red-600', 'text-slate-400'));
+            Object.values(navMap).forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.replace('text-red-600', 'text-slate-400');
+            });
             document.getElementById(navMap[p]).classList.replace('text-slate-400', 'text-red-600');
 
             if(p === 'dashboard') updateDashboard();
@@ -269,7 +284,7 @@
             updateDashboard();
         }
 
-        // --- INVOICE CORE LOGIC ---
+        // --- CORE LOGIC ---
         function createItemRow(d = {}) {
             return `
                 <div class="item-entry bg-white p-4 rounded-2xl border border-slate-100 shadow-sm space-y-3 relative text-gray-900">
@@ -306,7 +321,15 @@
                 if(name) items.push({ name: name, desc: r.querySelector('.item-desc').value, qty: parseFloat(r.querySelector('.qty').value)||1, kos: parseFloat(r.querySelector('.kos').value)||0, modal: parseFloat(r.querySelector('.modal-price').value)||0, discount: parseFloat(r.querySelector('.discount').value)||0 }); 
             });
             
-            const data = { customerName: n, customerPhone: p, warranty: war, status: st, total: document.getElementById('grandTotal').innerText, items: items };
+            const data = { 
+                customerName: n, 
+                customerPhone: p, 
+                warranty: war, 
+                status: st, 
+                repairStatus: 'Received', 
+                total: document.getElementById('grandTotal').innerText, 
+                items: items 
+            };
             
             try { 
                 if(ed) { await db.collection("invoices").doc(ed).update(data); } 
@@ -319,6 +342,11 @@
                 }
                 toggleModal(false); 
             } catch(e) { alert(e.message); }
+        }
+
+        async function updateLiveStatus(id, newStatus) {
+            try { await db.collection("invoices").doc(id).update({ repairStatus: newStatus }); } 
+            catch(e) { alert("Gagal update status: " + e.message); }
         }
 
         // --- UI UPDATES ---
@@ -400,7 +428,15 @@
             calculateTotal(); toggleModal(true); lucide.createIcons();
         }
 
-        function openActionMenu(id, name) { activeId = id; document.getElementById('actionTargetName').innerText = name; document.getElementById('actionModal').classList.add('modal-active'); const inv = allInvoices.find(i => i.id === id); document.getElementById('btnToggleStatus').onclick = () => toggleStatus(id, inv.status); }
+        function openActionMenu(id, name) { 
+            activeId = id; 
+            const inv = allInvoices.find(i => i.id === id);
+            document.getElementById('actionTargetName').innerText = name; 
+            document.getElementById('updateRepairStatus').value = inv.repairStatus || 'Received';
+            document.getElementById('actionModal').classList.add('modal-active'); 
+            document.getElementById('btnToggleStatus').onclick = () => toggleStatus(id, inv.status); 
+        }
+
         function closeActionMenu() { document.getElementById('actionModal').classList.remove('modal-active'); activeId = null; }
         async function toggleStatus(id, c) { const ns = c==='paid'?'outstanding':'paid'; const d = {status:ns}; if(ns==='paid') d.paidAt = firebase.firestore.FieldValue.serverTimestamp(); await db.collection("invoices").doc(id).update(d); closeActionMenu(); }
         function handleAction(type) { if(type==='edit') editInvoice(activeId); if(type==='delete') deleteInvoice(activeId); if(type==='getlink') { navigator.clipboard.writeText(`${window.location.origin}/view.html?id=${activeId}`); alert("Link Disalin!"); } closeActionMenu(); }
