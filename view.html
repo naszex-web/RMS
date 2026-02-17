@@ -2,136 +2,111 @@
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invois Rasmi - NASZC GSM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NASZEX CLOUD - Resit Rasmi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roboto+Mono:wght@500&display=swap');
         
-        /* Gaya Cop PAID */
-        .stamp {
-            position: absolute;
-            top: 15%;
-            right: 10%;
-            border: 8px solid #ef4444;
-            color: #ef4444;
-            padding: 10px 30px;
-            font-size: 3rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            transform: rotate(-20deg);
-            border-radius: 15px;
-            opacity: 0.3;
-            pointer-events: none;
-            display: none; /* Hidden by default */
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+            color: #0f172a; 
         }
 
+        .receipt-card {
+            background: #ffffff;
+            border-radius: 2.5rem;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ffffff;
+        }
+
+        .status-paid { background: #10b981; color: white; }
+        .status-unpaid { background: #e11d48; color: white; }
+
+        .phone-font { font-family: 'Roboto Mono', monospace; }
+        .loading-screen { position: fixed; inset: 0; background: #ffffff; z-index: 100; display: flex; align-items: center; justify-content: center; }
+        
         @media print {
             .no-print { display: none; }
-            body { background-color: white; padding: 0; }
-            .print-container { box-shadow: none !important; border: none !important; }
+            body { background: white; }
+            .receipt-card { box-shadow: none; border: 1px solid #f1f5f9; border-radius: 1rem; }
         }
     </style>
 </head>
-<body class="py-10 px-4">
+<body class="min-h-screen p-4 pb-12">
 
-    <div class="max-w-2xl mx-auto mb-6 flex justify-between no-print">
-        <button onclick="window.print()" class="bg-gray-100 px-6 py-2 rounded-lg font-bold text-gray-700 flex items-center gap-2">
-            <i data-lucide="printer" class="w-4 h-4"></i> Print
-        </button>
-        <button onclick="window.print()" class="bg-blue-50 px-6 py-2 rounded-lg font-bold text-blue-600 flex items-center gap-2">
-            <i data-lucide="file-text" class="w-4 h-4"></i> PDF
-        </button>
-    </div>
-
-    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-sm border border-gray-100 print-container relative overflow-hidden" id="invoice">
-        
-        <div id="paidStamp" class="stamp">PAID</div>
-
-        <div class="p-8 md:p-12">
-            <div class="mb-10 flex justify-between items-start">
-                <div>
-                    <img src="logo.png" alt="Logo" class="w-32 mb-6 object-contain">
-                    <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-tight">NASZC GSM REPAIR PHONE</h1>
-                    <div class="text-sm text-gray-600 mt-2 space-y-1">
-                        <p><span class="font-bold text-gray-800">Business Number</span> KT0597422-T</p>
-                        <p>Ara Kuda Jalan Lunas</p>
-                        <p>Tasek Gelugor</p>
-                        <p>Pulau Pinang</p>
-                        <p>0138491319</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <div id="unpaidBadge" class="hidden bg-red-600 text-white px-6 py-2 rounded-lg font-black text-sm uppercase tracking-widest">
-                        UNPAID
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 border-t border-gray-100 pt-8 mb-10">
-                <div>
-                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">BILL TO</p>
-                    <h2 id="viewCustName" class="text-lg font-bold text-gray-800 uppercase">---</h2>
-                    <p id="viewCustPhone" class="text-sm text-gray-600 font-medium">---</p>
-                </div>
-                <div class="text-right flex flex-col justify-between">
-                    <div>
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">INVOICE</p>
-                        <p id="viewInvNo" class="text-sm font-bold text-gray-800 font-mono">---</p>
-                    </div>
-                    <div class="mt-4">
-                        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">DATE</p>
-                        <p id="viewDate" class="text-sm font-bold text-gray-800">---</p>
-                    </div>
-                </div>
-            </div>
-
-            <table class="w-full mb-10">
-                <thead>
-                    <tr class="bg-gray-800 text-white text-[10px] uppercase font-bold tracking-widest">
-                        <th class="py-3 px-4 text-left">Description</th>
-                        <th class="py-3 px-4 text-right">Amount</th>
-                    </tr>
-                </thead>
-                <tbody id="viewItemRows">
-                    </tbody>
-            </table>
-
-            <div class="flex justify-end mb-12">
-                <div class="w-64 space-y-3 border-t-2 border-gray-800 pt-4">
-                    <div class="flex justify-between text-sm">
-                        <span class="font-bold text-gray-800 uppercase">TOTAL</span>
-                        <span class="font-bold text-gray-800">RM <span id="viewTotal">0.00</span></span>
-                    </div>
-                    <div class="flex justify-between text-sm text-gray-500">
-                        <span id="paymentMethodLabel">Payment</span>
-                        <span>-RM <span id="paymentAmt">0.00</span></span>
-                    </div>
-                    <div class="flex justify-between text-lg font-black border-t-2 border-gray-100 pt-3">
-                        <span class="uppercase">BALANCE DUE</span>
-                        <span>RM <span id="finalBalance">0.00</span></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-[11px] text-gray-500 leading-relaxed border-t pt-8">
-                <p class="font-bold text-gray-700 mb-3 uppercase tracking-tighter">Terms & Conditions:</p>
-                <ol class="list-decimal pl-4 space-y-1">
-                    <li>The original receipt must be presented for all claims.</li>
-                    <li>No refunds will be issued for services that have been completed.</li>
-                    <li>The company is not liable for any data loss or device damage occurring after the repair.</li>
-                    <li>Items left at the shop for over 30 days may be disposed of at the shop's discretion.</li>
-                </ol>
-            </div>
+    <div id="loader" class="loading-screen">
+        <div class="flex flex-col items-center">
+            <div class="w-10 h-10 border-4 border-slate-200 border-t-red-600 rounded-full animate-spin"></div>
+            <p class="text-[10px] font-black uppercase tracking-widest mt-4 text-slate-400">Memuatkan Resit...</p>
         </div>
     </div>
 
-    <div class="max-w-2xl mx-auto mt-8 text-center no-print">
-        <a id="btnSupport" href="#" target="_blank" class="text-sm font-bold text-green-600 flex items-center justify-center gap-2">
-            <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp Bantuan
-        </a>
+    <div id="receiptContent" class="max-w-md mx-auto hidden animate-in fade-in duration-700">
+        
+        <div class="flex flex-col items-center mb-8 mt-6">
+            <div class="w-16 h-16 bg-slate-950 rounded-[1.5rem] flex items-center justify-center shadow-2xl mb-4">
+                <span class="text-white font-black text-2xl italic">N</span>
+            </div>
+            <h1 class="text-[12px] font-black italic uppercase tracking-[0.3em] text-slate-900 leading-none">NASZEX <span class="text-red-600">CLOUD</span></h1>
+            <p class="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">Ara Kuda • Tasek Gelugor • Penang</p>
+            
+            <div id="statusBadge" class="mt-6 px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.15em] shadow-lg">
+                ---
+            </div>
+        </div>
+
+        <div class="receipt-card p-8 mb-6">
+            <div class="flex justify-between items-start mb-8 border-b border-slate-50 pb-6">
+                <div>
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Pelanggan</p>
+                    <h2 id="custName" class="text-sm font-extrabold uppercase text-slate-900">---</h2>
+                    <p id="custPhone" class="text-[11px] phone-font font-bold text-slate-500 mt-1">---</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">Tarikh</p>
+                    <p id="receiptDate" class="text-[11px] font-bold text-slate-900">--/--/----</p>
+                </div>
+            </div>
+
+            <div id="itemsList" class="space-y-4 mb-8">
+                </div>
+
+            <div class="border-t-2 border-slate-50 pt-6 space-y-3">
+                <div class="flex justify-between items-center">
+                    <p class="text-[10px] font-black text-slate-300 uppercase tracking-widest">Jumlah Perlu Bayar</p>
+                    <p class="text-2xl font-black text-slate-900 italic">RM <span id="grandTotal">0.00</span></p>
+                </div>
+                
+                <div class="bg-slate-50 rounded-2xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-blue-600"></i>
+                        <div>
+                            <p class="text-[8px] font-black text-slate-400 uppercase leading-none">Waranti</p>
+                            <p id="warrantyInfo" class="text-[10px] font-bold text-slate-800 uppercase mt-1">---</p>
+                        </div>
+                    </div>
+                    <i data-lucide="info" class="w-4 h-4 text-slate-300"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center px-6">
+            <p class="text-[10px] font-bold text-slate-400 leading-relaxed italic">
+                "Terima kasih kerana memilih NASZEX CLOUD. Kami komited memberikan servis terbaik untuk peranti anda."
+            </p>
+            
+            <div class="mt-8 pt-8 border-t border-slate-200 grid grid-cols-2 gap-4 no-print">
+                <button onclick="window.print()" class="flex items-center justify-center gap-2 py-4 bg-white border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-widest text-slate-600 active:scale-95 transition-all">
+                    <i data-lucide="printer" class="w-4 h-4"></i> Simpan PDF
+                </button>
+                <a href="https://wa.me/601114441444" id="waLink" class="flex items-center justify-center gap-2 py-4 bg-emerald-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-emerald-100 active:scale-95 transition-all">
+                    <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp
+                </a>
+            </div>
+        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
@@ -140,6 +115,7 @@
     <script>
         lucide.createIcons();
 
+        // Firebase Config (Must match index.html)
         const firebaseConfig = { 
             apiKey: "AIzaSyCSg9tH4E-71u8b3oFf5j9pDvhoNHZYnZg", 
             authDomain: "invoicely-52db9.firebaseapp.com", 
@@ -151,61 +127,78 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const invoiceId = urlParams.get('id');
+        function formatDate(ts) { 
+            if(!ts) return '--/--/----'; 
+            const d = new Date(ts.seconds * 1000); 
+            return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
+        }
 
         async function loadInvoice() {
-            if(!invoiceId) return;
+            const urlParams = new URLSearchParams(window.location.search);
+            const invoiceId = urlParams.get('id');
+
+            if (!invoiceId) {
+                document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500">ID RESIT TIDAK SAH</p>`;
+                return;
+            }
+
             try {
                 const doc = await db.collection("invoices").doc(invoiceId).get();
-                if (!doc.exists) return;
-                
+                if (!doc.exists) {
+                    document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500">RESIT TIDAK DIJUMPAI</p>`;
+                    return;
+                }
+
                 const data = doc.data();
-                const totalAmt = parseFloat(data.total.replace(/,/g, ''));
-                const isPaid = data.status === 'paid';
+                
+                // Populate Data
+                document.getElementById('custName').innerText = data.customerName;
+                document.getElementById('custPhone').innerText = data.customerPhone;
+                document.getElementById('receiptDate').innerText = formatDate(data.createdAt);
+                document.getElementById('grandTotal').innerText = data.total;
+                document.getElementById('warrantyInfo').innerText = data.warranty || 'No Warranty';
+                
+                // WhatsApp Link
+                document.getElementById('waLink').href = `https://wa.me/${data.customerPhone.replace(/[^0-9]/g, '')}`;
 
-                // Papar Data
-                document.getElementById('viewCustName').innerText = data.customerName;
-                document.getElementById('viewCustPhone').innerText = data.customerPhone;
-                document.getElementById('viewInvNo').innerText = data.invoiceNo;
-                document.getElementById('viewTotal').innerText = data.total;
-
-                // LOGIK STATUS (COP & BADGE)
-                if(isPaid) {
-                    document.getElementById('paidStamp').style.display = 'block';
-                    document.getElementById('unpaidBadge').classList.add('hidden');
-                    document.getElementById('paymentAmt').innerText = totalAmt.toFixed(2);
-                    document.getElementById('finalBalance').innerText = "0.00";
+                // Status Badge
+                const badge = document.getElementById('statusBadge');
+                if (data.status === 'paid') {
+                    badge.innerText = 'Sudah Dibayar';
+                    badge.classList.add('status-paid');
                 } else {
-                    document.getElementById('paidStamp').style.display = 'none';
-                    document.getElementById('unpaidBadge').classList.remove('hidden');
-                    document.getElementById('paymentAmt').innerText = "0.00";
-                    document.getElementById('finalBalance').innerText = totalAmt.toFixed(2);
+                    badge.innerText = 'Menunggu Bayaran';
+                    badge.classList.add('status-unpaid');
                 }
 
-                if(data.createdAt) {
-                    const date = new Date(data.createdAt.seconds * 1000);
-                    document.getElementById('viewDate').innerText = date.toLocaleDateString('en-GB');
-                }
-
-                const itemContainer = document.getElementById('viewItemRows');
-                itemContainer.innerHTML = '';
-                data.items.forEach(item => {
-                    const row = `
-                        <tr class="border-b border-gray-100 text-sm">
-                            <td class="py-5 px-4 text-gray-800">
-                                <p class="font-bold uppercase">${item.name}</p>
-                                <p class="text-[11px] text-gray-400 mt-1">${item.description || ''}</p>
-                            </td>
-                            <td class="py-5 px-4 text-right font-bold text-gray-800">RM${parseFloat(item.price).toFixed(2)}</td>
-                        </tr>
-                    `;
-                    itemContainer.insertAdjacentHTML('beforeend', row);
+                // Items List
+                const itemsCont = document.getElementById('itemsList');
+                itemsCont.innerHTML = "";
+                (data.items || []).forEach(item => {
+                    itemsCont.insertAdjacentHTML('beforeend', `
+                        <div class="flex justify-between items-start border-b border-slate-50 pb-3 last:border-0">
+                            <div class="flex-1 pr-4">
+                                <h4 class="text-[11px] font-black uppercase text-slate-800">${item.name}</h4>
+                                <p class="text-[9px] font-bold text-slate-400 mt-0.5">${item.desc || '-'}</p>
+                                <p class="text-[9px] font-black text-blue-600 mt-1 uppercase">Unit: ${item.qty}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[11px] font-black text-slate-900">RM ${(parseFloat(item.kos) * parseFloat(item.qty)).toFixed(2)}</p>
+                                ${item.discount > 0 ? `<p class="text-[8px] font-black text-rose-500 mt-0.5">Disc: -RM ${item.discount}</p>` : ''}
+                            </div>
+                        </div>
+                    `);
                 });
 
-                document.getElementById('btnSupport').href = `https://wa.me/60138491319?text=Invois:${data.invoiceNo}`;
+                // Show Content
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('receiptContent').classList.remove('hidden');
+                lucide.createIcons();
 
-            } catch (e) { console.error(e); }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500">RALAT SISTEM</p>`;
+            }
         }
 
         window.onload = loadInvoice;
