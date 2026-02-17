@@ -8,11 +8,30 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        
+        /* Gaya Cop PAID */
+        .stamp {
+            position: absolute;
+            top: 15%;
+            right: 10%;
+            border: 8px solid #ef4444;
+            color: #ef4444;
+            padding: 10px 30px;
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            transform: rotate(-20deg);
+            border-radius: 15px;
+            opacity: 0.3;
+            pointer-events: none;
+            display: none; /* Hidden by default */
+        }
+
         @media print {
             .no-print { display: none; }
             body { background-color: white; padding: 0; }
-            .print-container { box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; }
+            .print-container { box-shadow: none !important; border: none !important; }
         }
     </style>
 </head>
@@ -22,31 +41,40 @@
         <button onclick="window.print()" class="bg-gray-100 px-6 py-2 rounded-lg font-bold text-gray-700 flex items-center gap-2">
             <i data-lucide="printer" class="w-4 h-4"></i> Print
         </button>
-        <button onclick="downloadPDF()" class="bg-blue-50 px-6 py-2 rounded-lg font-bold text-blue-600 flex items-center gap-2">
+        <button onclick="window.print()" class="bg-blue-50 px-6 py-2 rounded-lg font-bold text-blue-600 flex items-center gap-2">
             <i data-lucide="file-text" class="w-4 h-4"></i> PDF
         </button>
     </div>
 
-    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-sm border border-gray-100 print-container" id="invoice">
+    <div class="max-w-2xl mx-auto bg-white shadow-xl rounded-sm border border-gray-100 print-container relative overflow-hidden" id="invoice">
         
+        <div id="paidStamp" class="stamp">PAID</div>
+
         <div class="p-8 md:p-12">
-            <div class="mb-10">
-                <img src="logo.png" alt="Logo" class="w-32 mb-6 object-contain">
-                <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-tight">NASZC GSM REPAIR PHONE</h1>
-                <div class="text-sm text-gray-600 mt-2 space-y-1">
-                    <p><span class="font-bold text-gray-800">Business Number</span> KT0597422-T</p>
-                    <p>Ara Kuda Jalan Lunas</p>
-                    <p>Tasek Gelugor</p>
-                    <p>Pulau Pinang</p>
-                    <p>0138491319</p>
+            <div class="mb-10 flex justify-between items-start">
+                <div>
+                    <img src="logo.png" alt="Logo" class="w-32 mb-6 object-contain">
+                    <h1 class="text-2xl font-bold text-gray-800 uppercase tracking-tight">NASZC GSM REPAIR PHONE</h1>
+                    <div class="text-sm text-gray-600 mt-2 space-y-1">
+                        <p><span class="font-bold text-gray-800">Business Number</span> KT0597422-T</p>
+                        <p>Ara Kuda Jalan Lunas</p>
+                        <p>Tasek Gelugor</p>
+                        <p>Pulau Pinang</p>
+                        <p>0138491319</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div id="unpaidBadge" class="hidden bg-red-600 text-white px-6 py-2 rounded-lg font-black text-sm uppercase tracking-widest">
+                        UNPAID
+                    </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 border-t border-gray-100 pt-8 mb-10">
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">BILL TO</p>
-                    <h2 id="viewCustName" class="text-lg font-bold text-gray-800">---</h2>
-                    <p id="viewCustPhone" class="text-sm text-gray-600">---</p>
+                    <h2 id="viewCustName" class="text-lg font-bold text-gray-800 uppercase">---</h2>
+                    <p id="viewCustPhone" class="text-sm text-gray-600 font-medium">---</p>
                 </div>
                 <div class="text-right flex flex-col justify-between">
                     <div>
@@ -58,11 +86,6 @@
                         <p id="viewDate" class="text-sm font-bold text-gray-800">---</p>
                     </div>
                 </div>
-            </div>
-
-            <div class="text-right mb-6">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">BALANCE DUE</p>
-                <p class="text-xl font-bold text-gray-800">RM <span id="balanceDue">0.00</span></p>
             </div>
 
             <table class="w-full mb-10">
@@ -77,34 +100,24 @@
             </table>
 
             <div class="flex justify-end mb-12">
-                <div class="w-64 space-y-3">
+                <div class="w-64 space-y-3 border-t-2 border-gray-800 pt-4">
                     <div class="flex justify-between text-sm">
                         <span class="font-bold text-gray-800 uppercase">TOTAL</span>
                         <span class="font-bold text-gray-800">RM <span id="viewTotal">0.00</span></span>
                     </div>
-                    <div id="paymentRow" class="flex justify-between text-sm text-gray-500">
-                        <span id="paymentMethodDisplay">Payment</span>
-                        <span>-RM <span id="paymentMade">0.00</span></span>
+                    <div class="flex justify-between text-sm text-gray-500">
+                        <span id="paymentMethodLabel">Payment</span>
+                        <span>-RM <span id="paymentAmt">0.00</span></span>
                     </div>
-                    <div class="flex justify-between text-sm font-black border-t pt-3">
+                    <div class="flex justify-between text-lg font-black border-t-2 border-gray-100 pt-3">
                         <span class="uppercase">BALANCE DUE</span>
                         <span>RM <span id="finalBalance">0.00</span></span>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-10">
-                <h3 class="text-lg font-bold text-gray-800 mb-4">Payment Info</h3>
-                <div class="text-sm text-gray-600 space-y-1">
-                    <p class="font-bold text-gray-700 mb-2">PAYMENT INSTRUCTIONS</p>
-                    <p>Cash</p>
-                    <p>Transfer / QR</p>
-                    <p>Spaylater</p>
-                </div>
-            </div>
-
             <div class="text-[11px] text-gray-500 leading-relaxed border-t pt-8">
-                <p class="font-bold text-gray-700 mb-3">Terms & Conditions:</p>
+                <p class="font-bold text-gray-700 mb-3 uppercase tracking-tighter">Terms & Conditions:</p>
                 <ol class="list-decimal pl-4 space-y-1">
                     <li>The original receipt must be presented for all claims.</li>
                     <li>No refunds will be issued for services that have been completed.</li>
@@ -112,13 +125,12 @@
                     <li>Items left at the shop for over 30 days may be disposed of at the shop's discretion.</li>
                 </ol>
             </div>
-
         </div>
     </div>
 
     <div class="max-w-2xl mx-auto mt-8 text-center no-print">
         <a id="btnSupport" href="#" target="_blank" class="text-sm font-bold text-green-600 flex items-center justify-center gap-2">
-            <i data-lucide="message-circle" class="w-4 h-4"></i> Perlukan bantuan? Chat kami
+            <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp Bantuan
         </a>
     </div>
 
@@ -128,7 +140,6 @@
     <script>
         lucide.createIcons();
 
-        // Ganti dengan config invoicely-52db9 awak
         const firebaseConfig = { 
             apiKey: "AIzaSyCSg9tH4E-71u8b3oFf5j9pDvhoNHZYnZg", 
             authDomain: "invoicely-52db9.firebaseapp.com", 
@@ -147,22 +158,30 @@
             if(!invoiceId) return;
             try {
                 const doc = await db.collection("invoices").doc(invoiceId).get();
-                if (!doc.exists) return alert("Invois tidak wujud!");
+                if (!doc.exists) return;
                 
                 const data = doc.data();
+                const totalAmt = parseFloat(data.total.replace(/,/g, ''));
+                const isPaid = data.status === 'paid';
 
+                // Papar Data
                 document.getElementById('viewCustName').innerText = data.customerName;
                 document.getElementById('viewCustPhone').innerText = data.customerPhone;
                 document.getElementById('viewInvNo').innerText = data.invoiceNo;
                 document.getElementById('viewTotal').innerText = data.total;
-                
-                const isPaid = data.status === 'paid';
-                const totalAmt = parseFloat(data.total.replace(/,/g, ''));
-                
-                // Logic Balance Due
-                document.getElementById('paymentMade').innerText = isPaid ? totalAmt.toFixed(2) : "0.00";
-                document.getElementById('finalBalance').innerText = isPaid ? "0.00" : totalAmt.toFixed(2);
-                document.getElementById('balanceDue').innerText = isPaid ? "0.00" : totalAmt.toFixed(2);
+
+                // LOGIK STATUS (COP & BADGE)
+                if(isPaid) {
+                    document.getElementById('paidStamp').style.display = 'block';
+                    document.getElementById('unpaidBadge').classList.add('hidden');
+                    document.getElementById('paymentAmt').innerText = totalAmt.toFixed(2);
+                    document.getElementById('finalBalance').innerText = "0.00";
+                } else {
+                    document.getElementById('paidStamp').style.display = 'none';
+                    document.getElementById('unpaidBadge').classList.remove('hidden');
+                    document.getElementById('paymentAmt').innerText = "0.00";
+                    document.getElementById('finalBalance').innerText = totalAmt.toFixed(2);
+                }
 
                 if(data.createdAt) {
                     const date = new Date(data.createdAt.seconds * 1000);
@@ -175,8 +194,8 @@
                     const row = `
                         <tr class="border-b border-gray-100 text-sm">
                             <td class="py-5 px-4 text-gray-800">
-                                <p class="font-bold">${item.name}</p>
-                                <p class="text-xs text-gray-500 mt-1">${item.description || ''}</p>
+                                <p class="font-bold uppercase">${item.name}</p>
+                                <p class="text-[11px] text-gray-400 mt-1">${item.description || ''}</p>
                             </td>
                             <td class="py-5 px-4 text-right font-bold text-gray-800">RM${parseFloat(item.price).toFixed(2)}</td>
                         </tr>
@@ -184,15 +203,9 @@
                     itemContainer.insertAdjacentHTML('beforeend', row);
                 });
 
-                document.getElementById('btnSupport').href = `https://wa.me/60138491319?text=Pertanyaan Invois: ${data.invoiceNo}`;
+                document.getElementById('btnSupport').href = `https://wa.me/60138491319?text=Invois:${data.invoiceNo}`;
 
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        function downloadPDF() {
-            window.print();
+            } catch (e) { console.error(e); }
         }
 
         window.onload = loadInvoice;
