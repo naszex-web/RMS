@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NASZEX GSM Repair - OFFICIAL RECEIPT</title>
+    <title>NASZEX CLOUD - OFFICIAL RECEIPT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -29,7 +29,7 @@
         /* Cop Stamp PAID Premium */
         .paid-stamp {
             position: absolute;
-            top: 50%;
+            top: 55%;
             left: 50%;
             transform: translate(-50%, -50%) rotate(-12deg);
             border: 5px solid #ef4444;
@@ -54,6 +54,10 @@
         .tnc-item::before { content: "•"; position: absolute; left: 0; color: #cbd5e1; }
 
         .loading-screen { position: fixed; inset: 0; background: #ffffff; z-index: 100; display: flex; align-items: center; justify-content: center; }
+        
+        /* Tracker Progress */
+        .step-active { background-color: #ef4444 !important; color: white !important; }
+        .line-active { background-color: #ef4444 !important; }
     </style>
 </head>
 <body class="min-h-screen p-4 pb-20">
@@ -74,13 +78,46 @@
             <h1 class="text-[16px] font-black italic uppercase tracking-[0.3em] text-slate-900 leading-none">NASZEX <span class="text-red-600">RECEIPT</span></h1>
             
             <div class="text-center mt-5 space-y-1">
-                <p class="text-[9px] font-black text-slate-800 uppercase tracking-widest">NASZEX PHONE REPAIR</p>
+                <p class="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none">NASZEX PHONE REPAIR</p>
                 <p class="text-[8px] font-bold text-slate-400 tracking-tight">Reg No: KT0597422-T (SSM)</p>
                 <p class="text-[8px] font-medium text-slate-400 italic">Ara Kuda Jalan Lunas, 13310 Tasek Gelugor, Penang</p>
                 <p class="text-[8px] font-black text-slate-500 uppercase mt-1 tracking-widest">Hotline: +60 13-849 1319</p>
             </div>
             
             <div id="statusBadge" class="mt-8 px-10 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em]">---</div>
+        </div>
+
+        <div class="receipt-card p-6 mb-6 relative overflow-hidden">
+            <h3 class="text-[9px] font-black uppercase text-slate-300 tracking-[0.2em] mb-6 text-center">Live Repair Tracking</h3>
+            <div class="relative flex justify-between items-start px-2">
+                <div class="absolute top-4 left-6 right-6 h-0.5 bg-slate-100 -z-10"></div>
+                <div id="progressLine" class="absolute top-4 left-6 h-0.5 bg-red-600 transition-all duration-1000 -z-10" style="width: 0%"></div>
+
+                <div class="flex flex-col items-center gap-2">
+                    <div id="step-Received" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
+                        <i data-lucide="package" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-[7px] font-black uppercase text-slate-400">Received</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <div id="step-Diagnosis" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-[7px] font-black uppercase text-slate-400">Diagnosis</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <div id="step-Repairing" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
+                        <i data-lucide="wrench" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-[7px] font-black uppercase text-slate-400">Repairing</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <div id="step-Ready" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    </div>
+                    <span class="text-[7px] font-black uppercase text-slate-400">Ready</span>
+                </div>
+            </div>
         </div>
 
         <div class="receipt-card p-8 mb-8 relative overflow-hidden">
@@ -138,8 +175,8 @@
         </div>
 
         <div class="text-center">
-            <p class="text-[9px] font-bold text-slate-400 italic mb-6">
-                "Specialist in Hardware & Software Solutions."
+            <p class="text-[9px] font-bold text-slate-400 italic mb-6 leading-relaxed px-4">
+                "Specialist in Hardware & Software Solutions. Fast, Reliable, Professional."
             </p>
             <div class="h-px w-12 bg-slate-200 mx-auto mb-6"></div>
             <p class="text-[8px] font-black text-slate-300 uppercase tracking-[0.4em]">Tasek Gelugor, Penang</p>
@@ -186,6 +223,29 @@
                 document.getElementById('grandTotal').innerText = data.total;
                 document.getElementById('warrantyInfo').innerText = data.warranty || 'No Warranty';
 
+                // --- LOGIC TRACKER PROGRESS ---
+                const currentStatus = data.repairStatus || 'Received';
+                const steps = ['Received', 'Diagnosis', 'Repairing', 'Ready', 'Collected'];
+                const statusIdx = steps.indexOf(currentStatus);
+                
+                // Update Line (100% / 3 segment = 33.33% each)
+                const line = document.getElementById('progressLine');
+                if (statusIdx >= 0 && statusIdx < 4) {
+                    line.style.width = (statusIdx * 33.33) + '%';
+                } else if (statusIdx >= 4) {
+                    line.style.width = '100%';
+                }
+
+                // Update Icons
+                steps.slice(0, 4).forEach((s, idx) => {
+                    const el = document.getElementById('step-' + s);
+                    if (idx <= statusIdx) {
+                        el.classList.add('step-active');
+                        el.querySelector('i').classList.add('text-white');
+                    }
+                });
+
+                // Badge & Stamp
                 const badge = document.getElementById('statusBadge');
                 const stamp = document.getElementById('paidStamp');
                 
