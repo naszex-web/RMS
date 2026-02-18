@@ -34,11 +34,16 @@
         .nav-glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
         .tab-active { color: #ef4444 !important; }
         
-        /* Pulse System */
+        /* Multi-Color Pulse System */
         .p-indigo { animation: pInd 2s infinite; }
         @keyframes pInd { 0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(99, 102, 241, 0); } 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); } }
+        
         .p-amber { animation: pAmb 2s infinite; }
         @keyframes pAmb { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+
+        .p-purple { animation: pPur 2s infinite; }
+        @keyframes pPur { 0% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(168, 85, 247, 0); } 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0); } }
+
         .p-blue { animation: pBlu 2s infinite; }
         @keyframes pBlu { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
 
@@ -64,7 +69,7 @@
                     <p class="text-[6px] font-black text-slate-400 uppercase tracking-[0.4em] mt-1.5 leading-none">Professional RMS v5.0</p>
                 </div>
             </div>
-            <button onclick="refreshData(this)" class="p-2 bg-slate-100 rounded-lg text-slate-400 btn-press">
+            <button onclick="refreshData()" class="p-2 bg-slate-100 rounded-lg text-slate-400 btn-press">
                 <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
             </button>
         </div>
@@ -142,22 +147,22 @@
 
     <div class="fixed bottom-0 left-0 right-0 z-40 nav-glass border-t border-slate-100 px-6 py-4 pb-10">
         <div class="max-w-md mx-auto grid grid-cols-4 gap-2 items-center">
-            <button onclick="showPage('dashboard')" id="nav-dash" class="flex flex-col items-center gap-1 text-red-600 btn-press">
+            <button onclick="showPage('dashboard')" id="nav-dash" class="flex flex-col items-center gap-1 text-red-600 btn-press transition-colors">
                 <i data-lucide="layout-grid" class="w-5 h-5"></i>
                 <span class="text-[8px] font-black uppercase tracking-tighter">Invoices</span>
             </button>
             <button onclick="openAddModal()" class="flex flex-col items-center gap-1 text-slate-400 btn-press">
-                <div class="bg-slate-900 text-white p-2 rounded-lg">
+                <div class="bg-slate-900 text-white p-2 rounded-lg shadow-md">
                     <i data-lucide="plus" class="w-5 h-5"></i>
                 </div>
                 <span class="text-[8px] font-black uppercase tracking-tighter">Add</span>
             </button>
-            <button onclick="showPage('reports')" id="nav-report" class="flex flex-col items-center gap-1 text-slate-400 btn-press">
-                <i data-lucide="pie-chart" class="w-5 h-5"></i>
+            <button onclick="showPage('reports')" id="nav-report" class="flex flex-col items-center gap-1 text-slate-400 btn-press transition-colors">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
                 <span class="text-[8px] font-black uppercase tracking-tighter">Report</span>
             </button>
-            <button onclick="showPage('profit')" id="nav-profit" class="flex flex-col items-center gap-1 text-slate-400 btn-press">
-                <i data-lucide="trending-up" class="w-5 h-5"></i>
+            <button onclick="showPage('profit')" id="nav-profit" class="flex flex-col items-center gap-1 text-slate-400 btn-press transition-colors">
+                <i data-lucide="wallet" class="w-5 h-5"></i>
                 <span class="text-[8px] font-black uppercase tracking-tighter">Profit</span>
             </button>
         </div>
@@ -180,6 +185,7 @@
                         <option value="No Warranty">No Warranty</option>
                         <option value="7 Days">7 Hari</option>
                         <option value="1 Month">1 Bulan</option>
+                        <option value="3 Months">3 Bulan</option>
                     </select>
                 </div>
 
@@ -206,10 +212,10 @@
     <div id="actionModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xl hidden flex-col justify-end">
         <div class="bg-white rounded-t-[3rem] w-full p-8 shadow-2xl space-y-3">
             <div class="w-12 h-1 bg-slate-100 rounded-full mx-auto mb-6"></div>
-            <p id="actionTargetName" class="text-center font-black text-sm uppercase text-slate-900 mb-6 italic"></p>
+            <p id="actionTargetName" class="text-center font-black text-sm uppercase text-slate-900 mb-6 italic tracking-tight"></p>
             
             <div class="p-5 bg-slate-50 rounded-2xl mb-4 border border-white text-slate-900">
-                <label class="text-[8px] font-black text-slate-400 block mb-2 uppercase tracking-widest">Current Status</label>
+                <label class="text-[8px] font-black text-slate-400 block mb-2 uppercase tracking-widest leading-none">Flow: Received → Waiting → Diagnosis → Repairing → Ready → Collected</label>
                 <select id="updateRepairStatus" onchange="updateLiveStatus(activeId, this.value)" class="w-full bg-white border border-slate-100 rounded-xl p-3.5 text-xs font-black outline-none">
                     <option value="Received">1. Received</option>
                     <option value="Waiting">2. Waiting List</option>
@@ -259,9 +265,16 @@
             localStorage.setItem('naszex_active_page', p);
             ['dashboardView', 'reportsView', 'profitView'].forEach(v => document.getElementById(v).classList.add('view-hidden'));
             document.getElementById(p + 'View').classList.remove('view-hidden');
+            
             const navMap = {dashboard: 'nav-dash', reports: 'nav-report', profit: 'nav-profit'};
-            Object.values(navMap).forEach(id => document.getElementById(id).classList.replace('text-red-600', 'text-slate-400'));
+            // Reset colors
+            Object.values(navMap).forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.replace('text-red-600', 'text-slate-400');
+            });
+            // Set active color
             if(navMap[p]) document.getElementById(navMap[p]).classList.replace('text-slate-400', 'text-red-600');
+            
             if(p === 'dashboard') updateDashboard();
             if(p === 'reports') generateReport();
             if(p === 'profit') generateProfitReport();
@@ -270,10 +283,13 @@
         async function refreshData() {
             const icon = document.getElementById('refresh-icon');
             icon.classList.add('animate-spin');
-            const snap = await db.collection("invoices").orderBy("createdAt", "desc").get();
-            allInvoices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            showPage(localStorage.getItem('naszex_active_page') || 'dashboard');
-            setTimeout(() => icon.classList.remove('animate-spin'), 800);
+            try {
+                const snap = await db.collection("invoices").orderBy("createdAt", "desc").get();
+                allInvoices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                showPage(localStorage.getItem('naszex_active_page') || 'dashboard');
+            } finally {
+                setTimeout(() => icon.classList.remove('animate-spin'), 800);
+            }
         }
 
         function listenToInvoices() {
@@ -294,7 +310,7 @@
             updateDashboard();
         }
 
-        // --- CORE FUNCTIONS ---
+        // --- DATA LOGIC ---
         function createItemRow(d = {}) {
             return `
                 <div class="item-entry bg-white p-4 rounded-2xl border border-slate-50 shadow-sm space-y-3 relative text-gray-900">
@@ -327,7 +343,13 @@
             const items = [];
             document.querySelectorAll('.item-entry').forEach(r => { 
                 const name = r.querySelector('.item-name').value;
-                if(name) items.push({ name: name, qty: parseFloat(r.querySelector('.qty').value)||1, kos: parseFloat(r.querySelector('.kos').value)||0, modal: parseFloat(r.querySelector('.modal-price').value)||0, discount: parseFloat(r.querySelector('.discount').value)||0 }); 
+                if(name) items.push({ 
+                    name: name, 
+                    qty: parseFloat(r.querySelector('.qty').value)||1, 
+                    kos: parseFloat(r.querySelector('.kos').value)||0, 
+                    modal: parseFloat(r.querySelector('.modal-price').value)||0, 
+                    discount: parseFloat(r.querySelector('.discount').value)||0 
+                }); 
             });
             const data = { customerName: n, customerPhone: p, warranty: war, status: st, total: document.getElementById('grandTotal').innerText, items: items };
             try { 
@@ -351,7 +373,6 @@
             try { await db.collection("invoices").doc(id).update({ repairStatus: newStatus }); } catch(e) { console.error(e); }
         }
 
-        // --- DASHBOARD ---
         function updateDashboard(search = "") {
             const container = document.getElementById('invoiceContainer'), now = new Date();
             let mPaid = 0, mPending = 0, mJobs = 0;
@@ -367,7 +388,7 @@
             if(currentFilter !== 'all') filtered = filtered.filter(i => i.status === currentFilter);
             if(search) { const q = search.toLowerCase(); filtered = filtered.filter(i => (i.customerName||"").toLowerCase().includes(q) || (i.customerPhone||"").includes(q)); }
 
-            container.innerHTML = filtered.length ? '' : '<div class="py-16 text-center text-slate-300 text-[10px] font-black uppercase italic italic">NX CLOUD: NO DATA</div>';
+            container.innerHTML = filtered.length ? '' : '<div class="py-16 text-center text-slate-300 text-[10px] font-black uppercase italic">NX CLOUD: NO DATA</div>';
             
             filtered.forEach(inv => {
                 const isPaid = inv.status === 'paid';
@@ -376,7 +397,7 @@
                 const s = inv.repairStatus || 'Received';
                 if(s === 'Received') pClass = "bg-slate-400";
                 else if(s === 'Waiting') pClass = "p-amber bg-amber-400";
-                else if(s === 'Diagnosis') pClass = "p-indigo bg-indigo-400";
+                else if(s === 'Diagnosis') pClass = "p-purple bg-purple-400";
                 else if(s === 'Repairing') pClass = "p-blue bg-blue-400";
                 else if(s === 'Ready') pClass = "bg-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.5)]";
                 else pClass = "bg-slate-500 opacity-50";
@@ -403,12 +424,14 @@
             lucide.createIcons();
         }
 
-        // --- REPORTING ---
         function generateReport() {
             const tb = document.getElementById('reportTableBody'), mo = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
             let h = "";
             mo.forEach((m, i) => {
-                const monthly = allInvoices.filter(inv => { const d = new Date(inv.createdAt?.seconds * 1000 || Date.now()); return d.getMonth() === i && d.getFullYear() === 2026; });
+                const monthly = allInvoices.filter(inv => { 
+                    const d = new Date(inv.createdAt?.seconds * 1000 || Date.now()); 
+                    return d.getMonth() === i && d.getFullYear() === 2026; 
+                });
                 const pS = monthly.reduce((s, inv) => inv.status === 'paid' ? s + parseFloat(inv.total) : s, 0);
                 h += `<tr class="border-b border-slate-50 last:border-0"><td class="pl-6 py-4 text-slate-400 uppercase tracking-widest font-black text-[9px]">${m}</td><td class="text-center">${monthly.length}</td><td class="text-right pr-6 text-emerald-600 italic font-black">RM ${Math.round(pS)}</td></tr>`;
             });
@@ -419,25 +442,65 @@
             const tb = document.getElementById('profitTableBody'), mo = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
             let h = "", totalNett = 0;
             mo.forEach((m, i) => {
-                const monthly = allInvoices.filter(inv => { const d = new Date(inv.createdAt?.seconds * 1000 || Date.now()); return d.getMonth() === i && d.getFullYear() === 2026 && inv.status === 'paid'; });
+                const monthly = allInvoices.filter(inv => { 
+                    const d = new Date(inv.createdAt?.seconds * 1000 || Date.now()); 
+                    return d.getMonth() === i && d.getFullYear() === 2026 && inv.status === 'paid'; 
+                });
                 let mModal = 0, mRev = 0;
-                monthly.forEach(inv => { mRev += parseFloat(inv.total); (inv.items || []).forEach(it => { mModal += (parseFloat(it.modal)||0) * (parseFloat(it.qty)||1); }); });
+                monthly.forEach(inv => { 
+                    mRev += parseFloat(inv.total); 
+                    (inv.items || []).forEach(it => { mModal += (parseFloat(it.modal)||0) * (parseFloat(it.qty)||1); }); 
+                });
                 const mProfit = mRev - mModal; totalNett += mProfit;
                 h += `<tr class="border-b border-slate-50 last:border-0"><td class="pl-6 py-4 text-slate-400 uppercase tracking-widest font-black text-[8px]">${m}</td><td class="text-center text-rose-500 font-bold">RM ${Math.round(mModal)}</td><td class="text-right pr-6 text-emerald-600 italic font-black">RM ${Math.round(mProfit)}</td></tr>`;
             });
-            tb.innerHTML = h; document.getElementById('total-net-profit').innerText = `RM ${Math.round(totalNett)}`;
+            tb.innerHTML = h; 
+            document.getElementById('total-net-profit').innerText = `RM ${Math.round(totalNett)}`;
         }
 
-        // --- MODALS ---
-        function openActionMenu(id, name) { activeId = id; const inv = allInvoices.find(i => i.id === id); document.getElementById('actionTargetName').innerText = name; document.getElementById('updateRepairStatus').value = inv.repairStatus || 'Received'; document.getElementById('actionModal').classList.add('modal-active'); document.getElementById('btnToggleStatus').onclick = () => toggleStatus(id, inv.status); }
+        // --- HANDLERS ---
+        function openActionMenu(id, name) { 
+            activeId = id; 
+            const inv = allInvoices.find(i => i.id === id); 
+            document.getElementById('actionTargetName').innerText = name; 
+            document.getElementById('updateRepairStatus').value = inv.repairStatus || 'Received'; 
+            document.getElementById('actionModal').classList.add('modal-active'); 
+            document.getElementById('btnToggleStatus').onclick = () => toggleStatus(id, inv.status); 
+        }
         function closeActionMenu() { document.getElementById('actionModal').classList.remove('modal-active'); activeId = null; }
-        async function toggleStatus(id, c) { const ns = c==='paid'?'outstanding':'paid'; await db.collection("invoices").doc(id).update({status:ns, paidAt: ns==='paid'?firebase.firestore.FieldValue.serverTimestamp():null}); closeActionMenu(); }
-        function handleAction(type) { if(type==='edit') editInvoice(activeId); if(type==='delete') deleteInvoice(activeId); if(type==='getlink') { navigator.clipboard.writeText(`${window.location.origin}/view.html?id=${activeId}`); alert("Link Deployed!"); } closeActionMenu(); }
+        async function toggleStatus(id, c) { 
+            const ns = c==='paid'?'outstanding':'paid'; 
+            await db.collection("invoices").doc(id).update({status:ns, paidAt: ns==='paid'?firebase.firestore.FieldValue.serverTimestamp():null}); 
+            closeActionMenu(); 
+        }
+        function handleAction(type) { 
+            if(type==='edit') editInvoice(activeId); 
+            if(type==='delete') deleteInvoice(activeId); 
+            if(type==='getlink') { 
+                const link = `${window.location.origin}/view.html?id=${activeId}`;
+                navigator.clipboard.writeText(link); 
+                alert("Tracking Link Deployed!"); 
+            } 
+            closeActionMenu(); 
+        }
         async function deleteInvoice(id) { if(confirm("Data Purge?")) await db.collection("invoices").doc(id).delete(); }
         function handleSearch() { updateDashboard(document.getElementById('searchInput').value); }
         function toggleModal(s) { document.getElementById('invoiceModal').classList.toggle('modal-active', s); }
         function openAddModal() { document.getElementById('modalTitle').innerText = "Initiate NX-Record"; document.getElementById('editId').value = ""; document.getElementById('itemRowsContainer').innerHTML = createItemRow(); document.getElementById('custName').value = ""; document.getElementById('custPhone').value = ""; document.getElementById('grandTotal').innerText = "0.00"; toggleModal(true); lucide.createIcons(); }
-        async function editInvoice(id) { const inv = allInvoices.find(i => i.id === id); if(!inv) return; document.getElementById('editId').value = id; document.getElementById('modalTitle').innerText = "Modify NX-Record"; document.getElementById('custName').value = inv.customerName; document.getElementById('custPhone').value = inv.customerPhone; document.getElementById('warranty').value = inv.warranty || "No Warranty"; document.getElementById('initialStatus').value = inv.status; const cont = document.getElementById('itemRowsContainer'); cont.innerHTML = ""; (inv.items || []).forEach(it => cont.insertAdjacentHTML('beforeend', createItemRow(it))); calculateTotal(); toggleModal(true); lucide.createIcons(); }
+        async function editInvoice(id) { 
+            const inv = allInvoices.find(i => i.id === id); 
+            if(!inv) return; 
+            document.getElementById('editId').value = id; 
+            document.getElementById('modalTitle').innerText = "Modify NX-Record"; 
+            document.getElementById('custName').value = inv.customerName; 
+            document.getElementById('custPhone').value = inv.customerPhone; 
+            document.getElementById('warranty').value = inv.warranty || "No Warranty"; 
+            document.getElementById('initialStatus').value = inv.status; 
+            const cont = document.getElementById('itemRowsContainer'); 
+            cont.innerHTML = ""; 
+            (inv.items || []).forEach(it => cont.insertAdjacentHTML('beforeend', createItemRow(it))); 
+            calculateTotal(); toggleModal(true); lucide.createIcons(); 
+        }
 
         window.onload = listenToInvoices;
     </script>
