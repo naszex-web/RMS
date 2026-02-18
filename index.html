@@ -83,39 +83,54 @@
         .timeline-dot { position: absolute; left: -6px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #e2e8f0; border: 2px solid #fff; box-shadow: 0 0 0 2px #e2e8f0; }
         .timeline-item.active .timeline-dot { background: #10b981; box-shadow: 0 0 0 2px #10b981; }
 
-        /* --- SAFE AREA ADJUSTMENTS --- */
-        .safe-top { 
-            padding-top: constant(safe-area-inset-top); /* iOS 11.0 */
-            padding-top: env(safe-area-inset-top); /* iOS 11.2+ */
-        }
-        .safe-bottom { 
-            padding-bottom: constant(safe-area-inset-bottom);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+       /* --- SAFE AREA ADJUSTMENTS (IMPROVED) --- */
+.safe-top { 
+    /* Ambil nilai safe area + 10px extra supaya tak rapat sangat dengan jam */
+    padding-top: calc(10px + env(safe-area-inset-top)); 
+}
+
+.safe-bottom { 
+    /* Ambil nilai safe area + 15px extra supaya tak kena bar home */
+    padding-bottom: calc(15px + env(safe-area-inset-bottom)); 
+}
+
+/* Fix untuk body supaya content tak sangkut bawah nav */
+body {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+}
+
+/* Toast pun kita kena naikkan sikit supaya tak kena Notch */
+#toast-container { 
+    position: fixed; 
+    top: calc(20px + env(safe-area-inset-top)); 
+    left: 50%; 
+    transform: translateX(-50%); 
+    z-index: 100; 
+}
+
     </style>
 </head>
 <body class="min-h-screen pb-32 bg-[#f8fafc]">
 
     <div id="toast-container"></div>
 
-    <nav class="sticky top-0 z-40 glass-nav px-5 py-3 gpu safe-top">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg shadow-slate-900/10 tap-effect">
-                    <span class="text-white font-black text-[12px] italic">NX</span>
-                </div>
-                <div>
-                    <h1 class="text-[12px] font-black italic uppercase tracking-[0.2em] text-slate-900 leading-none">NASZEX <span class="text-red-600">CLOUD</span></h1>
-                    <p class="text-[7px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1.5 leading-none pl-0.5">RMS Final v7.1</p>
-                </div>
+    <nav class="sticky top-0 z-40 glass-nav px-5 gpu safe-top pb-3">
+    <div class="max-w-md mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg">
+                <span class="text-white font-black text-[12px] italic">NX</span>
             </div>
-            <button onclick="refreshData()" class="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-slate-400 border border-slate-200 tap-effect shadow-sm">
-                <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
-            </button>
+            <div>
+                <h1 class="text-[12px] font-black italic uppercase tracking-[0.2em] text-slate-900 leading-none">NASZEX <span class="text-red-600">CLOUD</span></h1>
+                <p class="text-[7px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1.5 leading-none">RMS Final v7.1</p>
+            </div>
         </div>
-    </nav>
+        <button onclick="refreshData()" class="w-10 h-10 flex items-center justify-center bg-white rounded-xl text-slate-400 border border-slate-200 tap-effect shadow-sm">
+            <i data-lucide="refresh-cw" id="refresh-icon" class="w-4 h-4"></i>
+        </button>
+    </div>
+</nav>
+
 
     <div class="max-w-md mx-auto p-4 space-y-6">
         
@@ -274,31 +289,31 @@
         </main>
     </div>
 
-    <div class="fixed bottom-0 left-0 right-0 z-40 glass-bottom px-6 py-2 safe-bottom gpu">
-        <div class="max-w-md mx-auto grid grid-cols-4 items-end h-14 pb-2">
-            <button onclick="showPage('dashboard')" id="nav-dash" class="group flex flex-col items-center justify-center gap-1.5 tap-effect transition-colors nav-item-active">
-                <i data-lucide="layout-grid" class="w-5 h-5"></i>
-                <span class="text-[9px] font-black uppercase tracking-tight">Home</span>
-            </button>
-            
-            <button onclick="openAddModal()" class="group flex flex-col items-center justify-center gap-1.5 tap-effect text-slate-900">
-                <div class="w-5 h-5 bg-slate-900 text-white rounded-md flex items-center justify-center shadow-md">
-                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                </div>
-                <span class="text-[9px] font-black uppercase tracking-tight">New</span>
-            </button>
-            
-            <button onclick="showPage('reports')" id="nav-report" class="group flex flex-col items-center justify-center gap-1.5 tap-effect text-slate-400 transition-colors">
-                <i data-lucide="pie-chart" class="w-5 h-5"></i>
-                <span class="text-[9px] font-black uppercase tracking-tight">Data</span>
-            </button>
-            
-            <button onclick="showPage('tools')" id="nav-tools" class="group flex flex-col items-center justify-center gap-1.5 tap-effect text-slate-400 transition-colors">
-                <i data-lucide="wrench" class="w-5 h-5"></i>
-                <span class="text-[9px] font-black uppercase tracking-tight">Tools</span>
-            </button>
-        </div>
+    <div class="fixed bottom-0 left-0 right-0 z-40 glass-bottom px-6 gpu safe-bottom">
+    <div class="max-w-md mx-auto grid grid-cols-4 items-center h-16">
+        <button onclick="showPage('dashboard')" id="nav-dash" class="group flex flex-col items-center justify-center gap-1 tap-effect transition-colors nav-item-active">
+            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+            <span class="text-[9px] font-black uppercase">Home</span>
+        </button>
+        
+        <button onclick="openAddModal()" class="group flex flex-col items-center justify-center gap-1 tap-effect text-slate-900">
+            <div class="w-6 h-6 bg-slate-900 text-white rounded-lg flex items-center justify-center shadow-md">
+                 <i data-lucide="plus" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[9px] font-black uppercase">New</span>
+        </button>
+        
+        <button onclick="showPage('reports')" id="nav-report" class="group flex flex-col items-center justify-center gap-1 tap-effect text-slate-400">
+            <i data-lucide="pie-chart" class="w-5 h-5"></i>
+            <span class="text-[9px] font-black uppercase">Data</span>
+        </button>
+        
+        <button onclick="showPage('tools')" id="nav-tools" class="group flex flex-col items-center justify-center gap-1 tap-effect text-slate-400">
+            <i data-lucide="wrench" class="w-5 h-5"></i>
+            <span class="text-[9px] font-black uppercase">Tools</span>
+        </button>
     </div>
+</div>
 
     <div id="invoiceModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-md hidden modal-wrapper flex flex-col justify-end sm:justify-center gpu">
         <div class="bg-[#f8fafc] w-full max-w-md mx-auto h-[92vh] sm:h-[85vh] sm:rounded-3xl rounded-t-[2.5rem] shadow-2xl flex flex-col overflow-hidden relative">
