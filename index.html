@@ -6,6 +6,9 @@
     <title>NASZEX CLOUD - RMS PREMIUM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="logo.png">
     <style>
@@ -29,6 +32,7 @@
         }
         
         .view-hidden { display: none !important; }
+        .sub-view-hidden { display: none !important; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         
         /* Glass UI Premium */
@@ -46,6 +50,7 @@
         .grad-rose { background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); }
         .grad-indigo { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
         .grad-save { background: linear-gradient(135deg, #0f172a 0%, #334155 100%); }
+        .grad-tools { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
 
         /* Specific fix for inputs on iOS */
         input, select, textarea { font-size: 16px !important; } 
@@ -110,46 +115,105 @@
         </main>
 
         <main id="reportsView" class="view-hidden">
-            <div class="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
-                <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">Performance</h3>
-                    <i data-lucide="pie-chart" class="w-4 h-4 text-slate-300"></i>
+            <div id="dataMenu" class="space-y-4">
+                <div class="text-center pb-2">
+                    <h2 class="text-[12px] font-black uppercase tracking-widest text-slate-400">Data Center</h2>
                 </div>
-                <table class="w-full text-left">
-                    <thead class="bg-white">
-                        <tr>
-                            <th class="pl-6 py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest border-b border-slate-50">Month</th>
-                            <th class="text-center py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest border-b border-slate-50">Count</th>
-                            <th class="text-right pr-6 py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest border-b border-slate-50">Volume</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reportTableBody" class="text-slate-900 text-[11px] font-bold"></tbody>
-                </table>
+                
+                <button onclick="openSubReport('performance')" class="w-full bg-white p-6 rounded-[2rem] shadow-xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden group btn-press text-left">
+                    <div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <i data-lucide="bar-chart-2" class="w-16 h-16 text-slate-900"></i>
+                    </div>
+                    <span class="inline-block p-3 bg-slate-100 rounded-xl mb-4 text-slate-600"><i data-lucide="activity" class="w-6 h-6"></i></span>
+                    <h3 class="text-lg font-black uppercase tracking-tight text-slate-900">Performance</h3>
+                    <p class="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">Monthly Job Volume & Revenue</p>
+                </button>
+
+                <button onclick="openSubReport('profit')" class="w-full grad-save p-6 rounded-[2rem] shadow-xl shadow-slate-900/20 border border-slate-800 relative overflow-hidden group btn-press text-left">
+                     <div class="absolute right-0 top-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                         <i data-lucide="trending-up" class="w-16 h-16 text-white"></i>
+                    </div>
+                    <span class="inline-block p-3 bg-white/10 rounded-xl mb-4 text-white"><i data-lucide="dollar-sign" class="w-6 h-6"></i></span>
+                    <h3 class="text-lg font-black uppercase tracking-tight text-white">Net Profit</h3>
+                    <p class="text-[9px] text-white/50 font-bold uppercase tracking-wider mt-1">Cost vs. Revenue Analysis</p>
+                </button>
+            </div>
+
+            <div id="performanceContainer" class="sub-view-hidden">
+                <div class="flex items-center gap-3 mb-4">
+                    <button onclick="closeSubReport()" class="p-2 bg-white rounded-lg border border-slate-100 text-slate-400 btn-press"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">Performance Data</h3>
+                </div>
+                <div class="bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="pl-6 py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest">Month</th>
+                                <th class="text-center py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest">Jobs</th>
+                                <th class="text-right pr-6 py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest">Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody" class="text-slate-900 text-[11px] font-bold"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="profitContainer" class="sub-view-hidden">
+                <div class="flex items-center gap-3 mb-4">
+                    <button onclick="closeSubReport()" class="p-2 bg-white rounded-lg border border-slate-100 text-slate-400 btn-press"><i data-lucide="arrow-left" class="w-4 h-4"></i></button>
+                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">Profit Data</h3>
+                </div>
+                <div class="bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden">
+                     <table class="w-full text-left">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="pl-6 py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest">Month</th>
+                                <th class="text-center py-4 text-[8px] uppercase font-black text-rose-500 tracking-widest">Cost</th>
+                                <th class="text-right pr-6 py-4 text-[8px] uppercase font-black text-emerald-600 tracking-widest">Nett</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profitTableBody" class="text-[11px] font-bold"></tbody>
+                        <tfoot class="bg-slate-900 text-white">
+                            <tr>
+                                <td class="pl-6 py-6 text-white/40 text-[8px] uppercase font-black italic tracking-widest">Total Nett</td>
+                                <td colspan="2" id="total-net-profit" class="text-right pr-6 text-xl font-black italic tracking-tight">RM 0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </main>
 
-        <main id="profitView" class="view-hidden">
-            <div class="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
-                <div class="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-900">Net Profit</h3>
-                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i>
+        <main id="toolsView" class="view-hidden">
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100 min-h-[60vh] flex flex-col items-center justify-center text-center space-y-6">
+                
+                <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-2 animate-pulse">
+                    <i data-lucide="printer" class="w-10 h-10 text-blue-600"></i>
                 </div>
-                <table class="w-full text-left">
-                    <thead class="bg-white">
-                        <tr>
-                            <th class="pl-6 py-4 text-[8px] uppercase font-black text-slate-400 tracking-widest border-b border-slate-50">Month</th>
-                            <th class="text-center py-4 text-[8px] uppercase font-black text-rose-500 tracking-widest border-b border-slate-50">Cost</th>
-                            <th class="text-right pr-6 py-4 text-[8px] uppercase font-black text-emerald-600 tracking-widest border-b border-slate-50">Nett</th>
-                        </tr>
-                    </thead>
-                    <tbody id="profitTableBody" class="text-[11px] font-bold"></tbody>
-                    <tfoot class="bg-slate-900 text-white">
-                        <tr>
-                            <td class="pl-6 py-6 text-white/40 text-[8px] uppercase font-black italic tracking-widest">Total Nett</td>
-                            <td colspan="2" id="total-net-profit" class="text-right pr-6 text-xl font-black italic tracking-tight">RM 0</td>
-                        </tr>
-                    </tfoot>
-                </table>
+                
+                <div class="space-y-1">
+                    <h2 class="text-xl font-black uppercase tracking-tight text-slate-900">Auto Receipt</h2>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-8">Generate PDF & WhatsApp Client</p>
+                </div>
+
+                <div class="w-full space-y-3 relative">
+                     <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest block text-left ml-2">Customer Phone Number</label>
+                     <div class="relative">
+                        <input type="tel" id="toolPhoneInput" placeholder="e.g 0123456789" class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 pl-12 text-sm font-black outline-none focus:ring-2 focus:ring-blue-500/20 font-mono">
+                        <i data-lucide="smartphone" class="w-5 h-5 text-slate-300 absolute left-4 top-1/2 -translate-y-1/2"></i>
+                     </div>
+                </div>
+
+                <div class="w-full grid grid-cols-1 gap-3 pt-2">
+                    <button onclick="handleTools('whatsapp')" class="w-full grad-emerald p-4 rounded-xl text-white font-black uppercase text-[10px] tracking-widest shadow-lg shadow-emerald-500/20 btn-press flex items-center justify-center gap-2">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp Receipt
+                    </button>
+                    <button onclick="handleTools('pdf')" class="w-full bg-white border border-slate-200 p-4 rounded-xl text-slate-700 font-black uppercase text-[10px] tracking-widest shadow-sm btn-press flex items-center justify-center gap-2">
+                        <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+                    </button>
+                </div>
+
+                <p class="text-[8px] text-slate-300 italic pt-4">System will fetch the latest invoice for this number.</p>
             </div>
         </main>
     </div>
@@ -176,18 +240,17 @@
                 </div>
                 <span class="text-[9px] font-black uppercase tracking-tight">Data</span>
             </button>
-            <button onclick="showPage('profit')" id="nav-profit" class="group flex flex-col items-center gap-1.5 text-slate-400 btn-press">
+            <button onclick="showPage('tools')" id="nav-tools" class="group flex flex-col items-center gap-1.5 text-slate-400 btn-press">
                 <div class="p-1 rounded-lg group-hover:bg-slate-50 transition-colors">
-                    <i data-lucide="trending-up" class="w-5 h-5"></i>
+                    <i data-lucide="wrench" class="w-5 h-5"></i>
                 </div>
-                <span class="text-[9px] font-black uppercase tracking-tight">Profit</span>
+                <span class="text-[9px] font-black uppercase tracking-tight">Tools</span>
             </button>
         </div>
     </div>
 
     <div id="invoiceModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex-col justify-end sm:justify-center">
         <div class="bg-[#f8fafc] w-full max-w-md mx-auto h-[92vh] sm:h-[85vh] sm:rounded-[2.5rem] rounded-t-[2.5rem] shadow-2xl flex flex-col overflow-hidden relative">
-            
             <div class="px-6 pt-6 pb-4 bg-white border-b border-slate-100 flex justify-between items-center shrink-0 z-20">
                 <div>
                     <h2 id="modalTitle" class="text-[12px] font-black uppercase tracking-[0.2em] text-slate-900 italic">Initiate Record</h2>
@@ -197,10 +260,8 @@
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
-            
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-6 space-y-5 custom-scrollbar relative">
                 <input type="hidden" id="editId">
-                
                 <div class="space-y-3">
                     <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Customer Info</label>
                     <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 space-y-2">
@@ -217,7 +278,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="space-y-3">
                     <div class="flex justify-between items-end px-1">
                         <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Services & Parts</label>
@@ -225,11 +285,9 @@
                             <i data-lucide="plus-circle" class="w-3 h-3"></i> Add Item
                         </button>
                     </div>
-                    <div id="itemRowsContainer" class="space-y-3 pb-24">
-                        </div>
+                    <div id="itemRowsContainer" class="space-y-3 pb-24"></div>
                 </div>
             </div>
-
             <div class="p-6 bg-white border-t border-slate-200/60 shrink-0 z-30 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] safe-bottom">
                 <div class="flex justify-between items-center mb-4">
                     <select id="initialStatus" class="bg-slate-100 text-slate-600 py-2 px-4 rounded-lg text-[10px] font-black uppercase tracking-wider outline-none border border-slate-200">
@@ -241,7 +299,6 @@
                         <p class="text-2xl font-black text-slate-900 italic leading-none tracking-tight">RM <span id="grandTotal">0.00</span></p>
                     </div>
                 </div>
-
                 <button onclick="saveAndGenerate()" id="btnSave" class="w-full grad-save text-white py-4 rounded-xl font-black uppercase text-[11px] tracking-[0.3em] shadow-xl shadow-slate-900/20 btn-press flex items-center justify-center gap-2">
                     <span>Execute Sync</span>
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
@@ -257,7 +314,6 @@
                  <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Manage Record For</p>
                  <p id="actionTargetName" class="font-black text-lg uppercase text-slate-900 italic tracking-tight mt-1 truncate px-4"></p>
             </div>
-            
             <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 relative">
                 <label class="text-[8px] font-black text-slate-400 block mb-2 uppercase tracking-widest absolute -top-2.5 bg-slate-50 px-2 left-3">Update Repair Phase</label>
                 <select id="updateRepairStatus" onchange="updateLiveStatus(activeId, this.value)" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-black outline-none text-slate-700">
@@ -269,7 +325,6 @@
                     <option value="Collected">6. Collected (Finish)</option>
                 </select>
             </div>
-
             <div class="grid grid-cols-2 gap-3">
                 <button id="btnToggleStatus" class="col-span-2 flex items-center justify-between p-4 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase btn-press shadow-lg shadow-slate-900/10">
                     <span>Toggle Payment</span>
@@ -312,23 +367,109 @@
         // --- NAVIGATION ---
         function showPage(p) {
             localStorage.setItem('naszex_active_page', p);
-            ['dashboardView', 'reportsView', 'profitView'].forEach(v => document.getElementById(v).classList.add('view-hidden'));
+            ['dashboardView', 'reportsView', 'toolsView'].forEach(v => document.getElementById(v).classList.add('view-hidden'));
             document.getElementById(p + 'View').classList.remove('view-hidden');
             
             // Reset Nav Icons
             document.getElementById('nav-dash').classList.replace('text-red-600', 'text-slate-400');
             document.getElementById('nav-report').classList.replace('text-red-600', 'text-slate-400');
-            document.getElementById('nav-profit').classList.replace('text-red-600', 'text-slate-400');
+            document.getElementById('nav-tools').classList.replace('text-red-600', 'text-slate-400');
             
             // Active Nav Icon
-            const navMap = {dashboard: 'nav-dash', reports: 'nav-report', profit: 'nav-profit'};
+            const navMap = {dashboard: 'nav-dash', reports: 'nav-report', tools: 'nav-tools'};
             if(navMap[p]) document.getElementById(navMap[p]).classList.replace('text-slate-400', 'text-red-600');
             
             if(p === 'dashboard') updateDashboard();
-            if(p === 'reports') generateReport();
-            if(p === 'profit') generateProfitReport();
+            if(p === 'reports') closeSubReport(); // Reset to menu
             
             window.scrollTo(0,0);
+        }
+
+        // --- SUB REPORT NAVIGATION (NEW) ---
+        function openSubReport(type) {
+            document.getElementById('dataMenu').classList.add('sub-view-hidden');
+            if(type === 'performance') {
+                document.getElementById('performanceContainer').classList.remove('sub-view-hidden');
+                generateReport();
+            } else if(type === 'profit') {
+                document.getElementById('profitContainer').classList.remove('sub-view-hidden');
+                generateProfitReport();
+            }
+        }
+
+        function closeSubReport() {
+            document.getElementById('performanceContainer').classList.add('sub-view-hidden');
+            document.getElementById('profitContainer').classList.add('sub-view-hidden');
+            document.getElementById('dataMenu').classList.remove('sub-view-hidden');
+        }
+
+        // --- TOOLS LOGIC (NEW) ---
+        async function handleTools(action) {
+            const phone = document.getElementById('toolPhoneInput').value.trim();
+            if(!phone) return alert("Please enter Customer Phone Number!");
+
+            // Find latest invoice for this phone
+            const matches = allInvoices.filter(i => i.customerPhone.includes(phone));
+            if(matches.length === 0) return alert("No records found for this number!");
+            
+            // Sort by latest (using createdAt timestamp)
+            matches.sort((a,b) => b.createdAt.seconds - a.createdAt.seconds);
+            const inv = matches[0]; // Take the newest one
+
+            if(action === 'pdf') {
+                generateInvoicePDF(inv);
+            } else if(action === 'whatsapp') {
+                generateInvoicePDF(inv); // Trigger download first so they can attach it
+                const msg = `Hi ${inv.customerName}, attached is your receipt for job ${inv.invoiceNo}. Total: RM${inv.total}. Thank you! - NASZEX CLOUD`;
+                const url = `https://wa.me/60${phone.replace(/^0+/, '')}?text=${encodeURIComponent(msg)}`;
+                setTimeout(() => window.open(url, '_blank'), 1000);
+            }
+        }
+
+        function generateInvoicePDF(inv) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            
+            // Branding
+            doc.setFontSize(22); doc.setFont("helvetica", "bold"); doc.text("NASZEX CLOUD", 15, 20);
+            doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text("Professional Repair Services", 15, 25);
+            doc.text("Ara Kuda / Tasek Gelugor, Penang", 15, 30);
+            doc.text("Phone: 01X-XXXXXXX", 15, 35);
+
+            // Invoice Info
+            doc.setFontSize(16); doc.text("OFFICIAL RECEIPT", 140, 20);
+            doc.setFontSize(10);
+            doc.text(`No: ${inv.invoiceNo}`, 140, 30);
+            doc.text(`Date: ${formatDate(inv.createdAt)}`, 140, 35);
+            doc.text(`Status: ${inv.status.toUpperCase()}`, 140, 40);
+
+            // Customer
+            doc.setDrawColor(200); doc.line(15, 45, 195, 45);
+            doc.text(`Bill To: ${inv.customerName}`, 15, 55);
+            doc.text(`Phone: ${inv.customerPhone}`, 15, 60);
+
+            // Table
+            const bodyData = (inv.items || []).map(i => [i.name, i.qty, `RM ${i.kos}`, `RM ${i.discount}`, `RM ${(i.qty*i.kos)-i.discount}`]);
+            
+            doc.autoTable({
+                startY: 70,
+                head: [['Description', 'Qty', 'Unit Price', 'Disc', 'Total']],
+                body: bodyData,
+                theme: 'grid',
+                headStyles: { fillColor: [15, 23, 42] },
+                styles: { fontSize: 10 }
+            });
+
+            // Total
+            let finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(12); doc.setFont("helvetica", "bold");
+            doc.text(`GRAND TOTAL: RM ${inv.total}`, 140, finalY);
+
+            // Footer
+            doc.setFontSize(8); doc.setFont("helvetica", "italic");
+            doc.text("Thank you for choosing NASZEX. Warranty included as per terms.", 105, 280, { align: "center" });
+
+            doc.save(`Receipt-${inv.invoiceNo}.pdf`);
         }
 
         async function refreshData() {
@@ -343,7 +484,10 @@
         function listenToInvoices() {
             db.collection("invoices").orderBy("createdAt", "desc").onSnapshot((snap) => {
                 allInvoices = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                showPage(localStorage.getItem('naszex_active_page') || 'dashboard');
+                // Maintain view state if possible, else refresh active page
+                const active = localStorage.getItem('naszex_active_page') || 'dashboard';
+                if(active === 'dashboard') updateDashboard();
+                if(active === 'reports') { /* Data handles its own refresh on click */ }
             });
         }
 
@@ -363,7 +507,7 @@
             updateDashboard();
         }
 
-        // --- CORE FUNCTIONS ---
+        // --- CORE FUNCTIONS (UNTOUCHED LOGIC) ---
         function createItemRow(d = {}) {
             return `
                 <div class="item-entry bg-white p-3 rounded-2xl border border-slate-100 shadow-sm space-y-2 relative text-gray-900 group">
@@ -386,7 +530,6 @@
             const cont = document.getElementById('itemRowsContainer');
             cont.insertAdjacentHTML('beforeend', createItemRow()); 
             lucide.createIcons();
-            // Auto scroll to bottom of container to show new item
             const scrollArea = cont.closest('.overflow-y-auto');
             scrollArea.scrollTop = scrollArea.scrollHeight;
         }
@@ -444,7 +587,6 @@
             const container = document.getElementById('invoiceContainer'), now = new Date();
             let mPaid = 0, mPending = 0, mJobs = 0;
             
-            // Calculate Stats
             allInvoices.forEach(i => {
                 const a = parseFloat(i.total)||0, d = new Date(i.createdAt?.seconds * 1000 || Date.now());
                 if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) { mJobs++; if(i.status === 'paid') mPaid += a; else mPending += a; }
@@ -453,7 +595,6 @@
             document.getElementById('stat-month-pending').innerText = Math.round(mPending);
             document.getElementById('stat-month-jobs').innerText = mJobs;
 
-            // Filter
             let filtered = allInvoices;
             if(currentFilter !== 'all') filtered = filtered.filter(i => i.status === currentFilter);
             if(search) { const q = search.toLowerCase(); filtered = filtered.filter(i => (i.customerName||"").toLowerCase().includes(q) || (i.customerPhone||"").includes(q)); }
@@ -468,9 +609,7 @@
             
             filtered.forEach(inv => {
                 const isPaid = inv.status === 'paid';
-                // Premium Card Design
                 const cardBg = isPaid ? 'bg-gradient-to-br from-emerald-500 to-emerald-600' : 'bg-gradient-to-br from-rose-500 to-rose-600';
-                
                 let pClass = "", pTextClass = "text-white/60";
                 const s = inv.repairStatus || 'Received';
                 
@@ -487,7 +626,6 @@
                     <div onclick="openActionMenu('${inv.id}')" class="group relative overflow-hidden bg-white rounded-[1.5rem] p-1 shadow-sm border border-slate-100 active:scale-[0.98] transition-all">
                         <div class="${cardBg} p-4 rounded-[1.2rem] text-white relative overflow-hidden">
                             <div class="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -mr-8 -mt-8 blur-2xl"></div>
-                            
                             <div class="flex justify-between items-start mb-3">
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-2.5 h-2.5 rounded-full ${pClass}"></div>
@@ -501,7 +639,6 @@
                                     <p class="text-[7px] font-bold text-white/50 mt-1 uppercase tracking-widest">${inv.repairStatus || 'Received'}</p>
                                 </div>
                             </div>
-                            
                             <div class="flex items-center justify-between border-t border-white/10 pt-2.5 mt-1">
                                 <div class="flex items-center gap-2">
                                     <i data-lucide="smartphone" class="w-3 h-3 text-white/60"></i>
@@ -516,7 +653,7 @@
             lucide.createIcons();
         }
 
-        // --- REPORTING ---
+        // --- REPORTING GENERATORS ---
         function generateReport() {
             const tb = document.getElementById('reportTableBody'), mo = ["Jan", "Feb", "Mac", "Apr", "Mei", "Jun", "Jul", "Ogo", "Sep", "Okt", "Nov", "Dis"];
             let h = "";
@@ -557,12 +694,9 @@
             activeId = id; 
             const inv = allInvoices.find(i => i.id === id);
             if(!inv) return;
-
             document.getElementById('actionTargetName').innerText = inv.customerName; 
             document.getElementById('updateRepairStatus').value = inv.repairStatus || 'Received'; 
             document.getElementById('actionModal').classList.add('modal-active'); 
-            
-            // Setup Toggle Button Text based on current status
             const btnToggle = document.getElementById('btnToggleStatus');
             if(inv.status === 'paid') {
                  btnToggle.classList.replace('bg-emerald-600', 'bg-slate-900');
@@ -588,11 +722,7 @@
             if(type==='delete') deleteInvoice(activeId); 
             if(type==='getlink') { 
                 const url = `${window.location.origin}/view.html?id=${activeId}`;
-                if(navigator.share) {
-                    navigator.share({ title: 'Invoice', url: url });
-                } else {
-                    navigator.clipboard.writeText(url); alert("Link Copied!"); 
-                }
+                if(navigator.share) { navigator.share({ title: 'Invoice', url: url }); } else { navigator.clipboard.writeText(url); alert("Link Copied!"); }
             } 
             closeActionMenu(); 
         }
