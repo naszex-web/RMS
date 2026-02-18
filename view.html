@@ -27,7 +27,7 @@
 
         .phone-font { font-family: 'Roboto Mono', monospace; }
         
-        /* Premium Cop Stamp PAID */
+        /* Cop Stamp PAID Premium */
         .paid-stamp {
             position: absolute;
             top: 55%;
@@ -46,7 +46,6 @@
             z-index: 10;
             letter-spacing: 0.2em;
             filter: blur(0.4px);
-            user-select: none;
         }
 
         .status-paid { background: #059669; color: white; box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.3); }
@@ -54,40 +53,31 @@
 
         .loading-screen { position: fixed; inset: 0; background: #ffffff; z-index: 100; display: flex; align-items: center; justify-content: center; }
         
-        /* Tracker Progress Glow */
         .step-active { 
             background-color: #ef4444 !important; 
             color: white !important; 
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            border-color: #ef4444 !important;
         }
         
         .tnc-item { position: relative; padding-left: 1.2rem; margin-bottom: 0.4rem; }
         .tnc-item::before { content: ""; position: absolute; left: 0; top: 0.45rem; width: 0.3rem; height: 0.3rem; background: #cbd5e1; border-radius: 50%; }
-
-        @media print {
-            .no-print { display: none; }
-            body { background: white; padding: 0; }
-            .receipt-card { box-shadow: none; border: 1px solid #e2e8f0; border-radius: 1rem; }
-        }
     </style>
 </head>
 <body class="min-h-screen p-4 pb-20">
 
     <div id="loader" class="loading-screen">
         <div class="flex flex-col items-center">
-            <div class="relative w-16 h-16">
-                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-t-red-600 rounded-full animate-spin"></div>
-            </div>
-            <p class="text-[10px] font-black uppercase tracking-[0.4em] mt-8 text-slate-400 animate-pulse">NASZEX GSM SECURE LINK</p>
+            <div class="w-12 h-12 border-4 border-slate-100 border-t-red-600 rounded-full animate-spin"></div>
+            <p class="text-[9px] font-black uppercase tracking-[0.4em] mt-8 text-slate-400">NASZEX GSM SECURE</p>
         </div>
     </div>
 
-    <div id="receiptContent" class="max-w-md mx-auto hidden animate-in fade-in slide-in-from-bottom-8 duration-1000">
+    <div id="receiptContent" class="max-w-md mx-auto hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
         
         <div class="flex flex-col items-center mb-10 mt-6">
             <div class="w-20 h-20 bg-slate-950 rounded-[2.2rem] flex items-center justify-center shadow-2xl mb-6 border-4 border-white">
-                <span class="text-white font-black text-3xl italic text-red-600">NX</span>
+                <span class="text-red-600 font-black text-3xl italic">NX</span>
             </div>
             <h1 class="text-[18px] font-black italic uppercase tracking-[0.4em] text-slate-900 leading-none">NASZEX <span class="text-red-600">GSM</span></h1>
             
@@ -98,36 +88,35 @@
                 <p class="text-[9px] font-black text-slate-900 uppercase mt-2 tracking-widest border-t border-slate-100 pt-2 inline-block">Hotline: +60 13-849 1319</p>
             </div>
             
-            <div id="statusBadge" class="mt-10 px-12 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.3em] transition-all duration-700">---</div>
+            <div id="statusBadge" class="mt-10 px-12 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.3em]">---</div>
         </div>
 
         <div class="receipt-card p-8 mb-6 relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
             <h3 class="text-[10px] font-black uppercase text-slate-300 tracking-[0.25em] mb-8 text-center">Live Status Tracking</h3>
             <div class="relative flex justify-between items-start">
                 <div class="absolute top-5 left-8 right-8 h-[2px] bg-slate-100 -z-10"></div>
                 <div id="progressLine" class="absolute top-5 left-8 h-[2px] bg-red-600 transition-all duration-1000 ease-out -z-10" style="width: 0%"></div>
 
                 <div class="flex flex-col items-center gap-3">
-                    <div id="step-Received" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                    <div id="step-Received" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent text-slate-400">
                         <i data-lucide="package" class="w-5 h-5"></i>
                     </div>
                     <span class="text-[8px] font-black uppercase text-slate-400">Received</span>
                 </div>
                 <div class="flex flex-col items-center gap-3">
-                    <div id="step-Diagnosis" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                    <div id="step-Diagnosis" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent text-slate-400">
                         <i data-lucide="search" class="w-5 h-5"></i>
                     </div>
                     <span class="text-[8px] font-black uppercase text-slate-400">Diagnosis</span>
                 </div>
                 <div class="flex flex-col items-center gap-3">
-                    <div id="step-Repairing" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                    <div id="step-Repairing" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent text-slate-400">
                         <i data-lucide="wrench" class="w-5 h-5"></i>
                     </div>
                     <span class="text-[8px] font-black uppercase text-slate-400">Repairing</span>
                 </div>
                 <div class="flex flex-col items-center gap-3">
-                    <div id="step-Ready" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                    <div id="step-Ready" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent text-slate-400">
                         <i data-lucide="check-circle" class="w-5 h-5"></i>
                     </div>
                     <span class="text-[8px] font-black uppercase text-slate-400">Ready</span>
@@ -137,7 +126,6 @@
 
         <div class="receipt-card p-10 mb-8 relative overflow-hidden">
             <div id="paidStamp" class="paid-stamp">PAID</div>
-            
             <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 via-slate-900 to-red-600 opacity-90"></div>
 
             <div class="grid grid-cols-2 gap-8 mb-12 border-b border-slate-50 pb-10">
@@ -153,28 +141,19 @@
                 </div>
             </div>
 
-            <div class="flex items-center px-2 mb-6 opacity-40">
-                <p class="flex-1 text-[9px] font-black uppercase tracking-[0.2em]">Service Description</p>
-                <p class="w-10 text-center text-[9px] font-black uppercase tracking-[0.2em]">Qty</p>
-                <p class="w-20 text-right text-[9px] font-black uppercase tracking-[0.2em]">Price</p>
-            </div>
+            <div id="itemsList" class="space-y-6 mb-12"></div>
 
-            <div id="itemsList" class="space-y-6 mb-12">
+            <div class="border-t border-slate-100 pt-10 flex justify-between items-end">
+                <div class="flex-1">
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Warranty Term</p>
+                    <div class="inline-flex items-center gap-2.5 bg-blue-50 text-blue-600 px-4 py-2 rounded-xl font-black uppercase text-[10px] border border-blue-100/50">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span id="warrantyInfo">---</span>
+                    </div>
                 </div>
-
-            <div class="border-t border-slate-100 pt-10">
-                <div class="flex justify-between items-end">
-                    <div class="flex-1">
-                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Warranty Term</p>
-                        <div class="inline-flex items-center gap-2.5 bg-blue-50 text-blue-600 px-4 py-2 rounded-xl font-black uppercase text-[10px] border border-blue-100/50">
-                            <i data-lucide="shield-check" class="w-4 h-4"></i>
-                            <span id="warrantyInfo">---</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Grand Total</p>
-                        <p class="text-4xl font-black text-slate-900 italic tracking-tighter leading-none">RM <span id="grandTotal">0.00</span></p>
-                    </div>
+                <div class="text-right">
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Grand Total</p>
+                    <p class="text-4xl font-black text-slate-900 italic tracking-tighter leading-none">RM <span id="grandTotal">0.00</span></p>
                 </div>
             </div>
 
@@ -184,17 +163,8 @@
                     <p class="tnc-item">Resit asal diperlukan untuk sebarang tuntutan waranti.</p>
                     <p class="tnc-item">Tiada pulangan wang bagi servis yang telah disiapkan.</p>
                     <p class="tnc-item">Tidak bertanggungjawab atas kehilangan data semasa/selepas repair.</p>
-                    <p class="tnc-item">Barangan melebihi 30 hari akan dilupuskan secara automatik.</p>
                 </div>
             </div>
-        </div>
-
-        <div class="text-center px-10 pb-12">
-            <p class="text-[10px] font-bold text-slate-400 italic mb-8 leading-relaxed">
-                "Hardware Diagnosis, Software Restoration & Professional Consulting."
-            </p>
-            <div class="h-[2px] w-16 bg-slate-200 mx-auto mb-8"></div>
-            <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">Tasek Gelugor • Penang</p>
         </div>
     </div>
 
@@ -215,55 +185,59 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        function formatDate(ts) { 
-            if(!ts) return '--/--/----'; 
-            const d = new Date(ts.seconds * 1000); 
-            return `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
-        }
-
         async function loadInvoice() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
-            if (!id) return document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 uppercase tracking-widest text-[10px]">ID Missing</p>`;
+            if (!id) {
+                document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 uppercase text-[10px]">ID Missing</p>`;
+                return;
+            }
 
             try {
                 const doc = await db.collection("invoices").doc(id).get();
-                if (!doc.exists) return document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 tracking-widest uppercase text-[10px]">Invalid Receipt</p>`;
+                if (!doc.exists) {
+                    document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 uppercase text-[10px]">Invalid Link</p>`;
+                    return;
+                }
 
                 const data = doc.data();
+                
+                // --- SAFE RENDERING (ELAK CRASH) ---
                 document.getElementById('invoiceNo').innerText = data.invoiceNo || 'NX-SYSTEM';
-                document.getElementById('custName').innerText = data.customerName;
-                document.getElementById('custPhone').innerText = data.customerPhone;
-                document.getElementById('receiptDate').innerText = formatDate(data.createdAt);
-                document.getElementById('grandTotal').innerText = parseFloat(data.total).toFixed(2);
+                document.getElementById('custName').innerText = data.customerName || '---';
+                document.getElementById('custPhone').innerText = data.customerPhone || '---';
+                document.getElementById('grandTotal').innerText = data.total ? parseFloat(data.total).toFixed(2) : '0.00';
                 document.getElementById('warrantyInfo').innerText = data.warranty || 'No Warranty';
+                
+                if(data.createdAt) {
+                    const d = new Date(data.createdAt.seconds * 1000);
+                    document.getElementById('receiptDate').innerText = `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
+                }
 
-                // --- PROGRESS TRACKER LOGIC ---
+                // --- PROGRESS LOGIC (SAFE) ---
                 const repairStatus = data.repairStatus || 'Received';
                 const steps = ['Received', 'Diagnosis', 'Repairing', 'Ready', 'Collected'];
                 const statusIdx = steps.indexOf(repairStatus);
                 
                 const line = document.getElementById('progressLine');
-                // Calculate Width: 0->0%, 1->33%, 2->66%, 3->100%
                 if (statusIdx >= 0 && statusIdx < 4) {
                     line.style.width = (statusIdx * 33.33) + '%';
                 } else if (statusIdx >= 4) {
                     line.style.width = '100%';
                 }
 
-                // Activate Icons
                 steps.slice(0, 4).forEach((s, idx) => {
                     const el = document.getElementById('step-' + s);
                     if (el && (idx <= statusIdx || statusIdx >= 4)) {
                         el.classList.add('step-active');
-                        el.querySelector('i').classList.add('text-white');
+                        const icon = el.querySelector('i');
+                        if(icon) icon.classList.add('text-white');
                     }
                 });
 
-                // Badge & Stamp Logic
+                // Status Badge & Stamp
                 const badge = document.getElementById('statusBadge');
                 const stamp = document.getElementById('paidStamp');
-                
                 if (data.status === 'paid') {
                     badge.innerText = 'OFFICIAL RECEIPT';
                     badge.classList.add('status-paid');
@@ -271,37 +245,32 @@
                 } else {
                     badge.innerText = 'UNPAID INVOICE';
                     badge.classList.add('status-unpaid');
-                    stamp.style.display = 'none';
                 }
 
+                // Items List
                 const itemsCont = document.getElementById('itemsList');
                 itemsCont.innerHTML = "";
                 (data.items || []).forEach(item => {
                     const lineTotal = (parseFloat(item.kos) * parseFloat(item.qty)).toFixed(2);
                     itemsCont.insertAdjacentHTML('beforeend', `
-                        <div class="flex items-start px-2 py-4 border-b border-slate-50 last:border-0 transition-all hover:bg-slate-50/50">
+                        <div class="flex items-start px-2 py-4 border-b border-slate-50 last:border-0">
                             <div class="flex-1 pr-6">
                                 <h4 class="text-[11px] font-extrabold uppercase text-slate-800 leading-tight">${item.name}</h4>
-                                ${item.desc ? `<p class="text-[9px] font-bold text-slate-400 mt-1.5 uppercase tracking-tighter italic">${item.desc}</p>` : ''}
+                                <p class="text-[9px] font-bold text-slate-400 mt-1.5 uppercase tracking-tighter italic">${item.desc || '-'}</p>
                             </div>
-                            <div class="w-10 text-center">
-                                <p class="text-[11px] font-black text-slate-900 phone-font">${item.qty}</p>
-                            </div>
-                            <div class="w-24 text-right">
-                                <p class="text-[12px] font-black text-slate-900 phone-font">RM ${lineTotal}</p>
-                                ${item.discount > 0 ? `<p class="text-[8px] font-black text-rose-500 mt-1.5 uppercase">-RM ${item.discount}</p>` : ''}
-                            </div>
+                            <div class="w-10 text-center"><p class="text-[11px] font-black phone-font">${item.qty}</p></div>
+                            <div class="w-24 text-right"><p class="text-[12px] font-black phone-font">RM ${lineTotal}</p></div>
                         </div>
                     `);
                 });
 
-                // Final Reveal
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('receiptContent').classList.remove('hidden');
                 lucide.createIcons();
+
             } catch (error) { 
-                console.error(error);
-                document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 uppercase text-[10px]">Database Error</p>`; 
+                console.error("Firebase Error:", error);
+                document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 uppercase text-[10px]">Database Connection Error</p>`; 
             }
         }
         window.onload = loadInvoice;
