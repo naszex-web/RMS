@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NASZEX CLOUD - OFFICIAL RECEIPT</title>
+    <title>NASZEX GSM - OFFICIAL RECEIPT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -11,175 +11,190 @@
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f1f5f9; 
+            background: radial-gradient(circle at top right, #f8fafc, #f1f5f9);
             color: #0f172a; 
             letter-spacing: -0.01em;
         }
 
         .receipt-card { 
-            background: #ffffff; 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px);
             border-radius: 2.5rem; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); 
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.1); 
+            border: 1px solid rgba(255, 255, 255, 0.8);
             position: relative;
         }
 
         .phone-font { font-family: 'Roboto Mono', monospace; }
         
-        /* Cop Stamp PAID Premium */
+        /* Premium Cop Stamp PAID */
         .paid-stamp {
             position: absolute;
             top: 55%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(-12deg);
-            border: 5px solid #ef4444;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            border: 6px double #ef4444;
             color: #ef4444;
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            padding: 0.4rem 1.2rem;
+            padding: 0.5rem 2rem;
             text-transform: uppercase;
-            border-radius: 0.8rem;
-            opacity: 0.15;
+            border-radius: 0.5rem;
+            opacity: 0.12;
             pointer-events: none;
             display: none;
             z-index: 10;
-            letter-spacing: 0.15em;
-            filter: blur(0.5px);
+            letter-spacing: 0.2em;
+            filter: blur(0.4px);
+            user-select: none;
         }
 
-        .status-paid { background: #10b981; color: white; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); }
-        .status-unpaid { background: #e11d48; color: white; box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2); }
-
-        .tnc-item { position: relative; padding-left: 1rem; margin-bottom: 0.3rem; }
-        .tnc-item::before { content: "•"; position: absolute; left: 0; color: #cbd5e1; }
+        .status-paid { background: #059669; color: white; box-shadow: 0 10px 20px -5px rgba(5, 150, 105, 0.3); }
+        .status-unpaid { background: #e11d48; color: white; box-shadow: 0 10px 20px -5px rgba(225, 29, 72, 0.3); }
 
         .loading-screen { position: fixed; inset: 0; background: #ffffff; z-index: 100; display: flex; align-items: center; justify-content: center; }
         
-        /* Tracker Progress */
-        .step-active { background-color: #ef4444 !important; color: white !important; }
-        .line-active { background-color: #ef4444 !important; }
+        /* Tracker Progress Glow */
+        .step-active { 
+            background-color: #ef4444 !important; 
+            color: white !important; 
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .tnc-item { position: relative; padding-left: 1.2rem; margin-bottom: 0.4rem; }
+        .tnc-item::before { content: ""; position: absolute; left: 0; top: 0.45rem; width: 0.3rem; height: 0.3rem; background: #cbd5e1; border-radius: 50%; }
+
+        @media print {
+            .no-print { display: none; }
+            body { background: white; padding: 0; }
+            .receipt-card { box-shadow: none; border: 1px solid #e2e8f0; border-radius: 1rem; }
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 pb-20">
 
     <div id="loader" class="loading-screen">
         <div class="flex flex-col items-center">
-            <div class="w-12 h-12 border-4 border-slate-100 border-t-red-600 rounded-full animate-spin"></div>
-            <p class="text-[9px] font-black uppercase tracking-[0.4em] mt-6 text-slate-400">NASZEX CLOUD SECURE</p>
+            <div class="relative w-16 h-16">
+                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-red-600 rounded-full animate-spin"></div>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] mt-8 text-slate-400 animate-pulse">NASZEX GSM SECURE LINK</p>
         </div>
     </div>
 
-    <div id="receiptContent" class="max-w-md mx-auto hidden animate-in fade-in slide-in-from-bottom-6 duration-1000">
+    <div id="receiptContent" class="max-w-md mx-auto hidden animate-in fade-in slide-in-from-bottom-8 duration-1000">
         
-        <div class="flex flex-col items-center mb-8 mt-6">
-            <div class="w-16 h-16 bg-slate-950 rounded-[1.8rem] flex items-center justify-center shadow-2xl mb-5 border-4 border-white">
-                <span class="text-white font-black text-2xl italic text-red-600">NX</span>
+        <div class="flex flex-col items-center mb-10 mt-6">
+            <div class="w-20 h-20 bg-slate-950 rounded-[2.2rem] flex items-center justify-center shadow-2xl mb-6 border-4 border-white">
+                <span class="text-white font-black text-3xl italic text-red-600">NX</span>
             </div>
-            <h1 class="text-[16px] font-black italic uppercase tracking-[0.3em] text-slate-900 leading-none">NASZEX <span class="text-red-600">RECEIPT</span></h1>
+            <h1 class="text-[18px] font-black italic uppercase tracking-[0.4em] text-slate-900 leading-none">NASZEX <span class="text-red-600">GSM</span></h1>
             
-            <div class="text-center mt-5 space-y-1">
-                <p class="text-[9px] font-black text-slate-800 uppercase tracking-widest leading-none">NASZEX PHONE REPAIR</p>
+            <div class="text-center mt-6 space-y-1.5 px-4">
+                <p class="text-[10px] font-black text-slate-800 uppercase tracking-widest leading-none">NASZEX PHONE REPAIR SERVICES</p>
                 <p class="text-[8px] font-bold text-slate-400 tracking-tight">Reg No: KT0597422-T (SSM)</p>
-                <p class="text-[8px] font-medium text-slate-400 italic">Ara Kuda Jalan Lunas, 13310 Tasek Gelugor, Penang</p>
-                <p class="text-[8px] font-black text-slate-500 uppercase mt-1 tracking-widest">Hotline: +60 13-849 1319</p>
+                <p class="text-[9px] font-medium text-slate-500 italic">Ara Kuda Jalan Lunas, 13310 Tasek Gelugor, Penang</p>
+                <p class="text-[9px] font-black text-slate-900 uppercase mt-2 tracking-widest border-t border-slate-100 pt-2 inline-block">Hotline: +60 13-849 1319</p>
             </div>
             
-            <div id="statusBadge" class="mt-8 px-10 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.25em]">---</div>
+            <div id="statusBadge" class="mt-10 px-12 py-3 rounded-full text-[11px] font-black uppercase tracking-[0.3em] transition-all duration-700">---</div>
         </div>
 
-        <div class="receipt-card p-6 mb-6 relative overflow-hidden">
-            <h3 class="text-[9px] font-black uppercase text-slate-300 tracking-[0.2em] mb-6 text-center">Live Repair Tracking</h3>
-            <div class="relative flex justify-between items-start px-2">
-                <div class="absolute top-4 left-6 right-6 h-0.5 bg-slate-100 -z-10"></div>
-                <div id="progressLine" class="absolute top-4 left-6 h-0.5 bg-red-600 transition-all duration-1000 -z-10" style="width: 0%"></div>
+        <div class="receipt-card p-8 mb-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-slate-50"></div>
+            <h3 class="text-[10px] font-black uppercase text-slate-300 tracking-[0.25em] mb-8 text-center">Live Status Tracking</h3>
+            <div class="relative flex justify-between items-start">
+                <div class="absolute top-5 left-8 right-8 h-[2px] bg-slate-100 -z-10"></div>
+                <div id="progressLine" class="absolute top-5 left-8 h-[2px] bg-red-600 transition-all duration-1000 ease-out -z-10" style="width: 0%"></div>
 
-                <div class="flex flex-col items-center gap-2">
-                    <div id="step-Received" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
-                        <i data-lucide="package" class="w-4 h-4"></i>
+                <div class="flex flex-col items-center gap-3">
+                    <div id="step-Received" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                        <i data-lucide="package" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[7px] font-black uppercase text-slate-400">Received</span>
+                    <span class="text-[8px] font-black uppercase text-slate-400">Received</span>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div id="step-Diagnosis" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
-                        <i data-lucide="search" class="w-4 h-4"></i>
+                <div class="flex flex-col items-center gap-3">
+                    <div id="step-Diagnosis" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                        <i data-lucide="search" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[7px] font-black uppercase text-slate-400">Diagnosis</span>
+                    <span class="text-[8px] font-black uppercase text-slate-400">Diagnosis</span>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div id="step-Repairing" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
-                        <i data-lucide="wrench" class="w-4 h-4"></i>
+                <div class="flex flex-col items-center gap-3">
+                    <div id="step-Repairing" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                        <i data-lucide="wrench" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[7px] font-black uppercase text-slate-400">Repairing</span>
+                    <span class="text-[8px] font-black uppercase text-slate-400">Repairing</span>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div id="step-Ready" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center transition-all duration-500">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <div class="flex flex-col items-center gap-3">
+                    <div id="step-Ready" class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center transition-all duration-700 border-2 border-transparent">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
                     </div>
-                    <span class="text-[7px] font-black uppercase text-slate-400">Ready</span>
+                    <span class="text-[8px] font-black uppercase text-slate-400">Ready</span>
                 </div>
             </div>
         </div>
 
-        <div class="receipt-card p-8 mb-8 relative overflow-hidden">
+        <div class="receipt-card p-10 mb-8 relative overflow-hidden">
             <div id="paidStamp" class="paid-stamp">PAID</div>
             
-            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-red-600 to-slate-900"></div>
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-red-600 via-slate-900 to-red-600 opacity-90"></div>
 
-            <div class="grid grid-cols-2 gap-6 mb-10 border-b border-slate-50 pb-8">
+            <div class="grid grid-cols-2 gap-8 mb-12 border-b border-slate-50 pb-10">
                 <div>
-                    <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-2">Invoice No</p>
-                    <h2 id="invoiceNo" class="text-[14px] font-black text-red-600 italic tracking-tight leading-none">---</h2>
-                    <p id="receiptDate" class="text-[10px] font-bold text-slate-400 mt-2 italic">--/--/----</p>
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Order Token</p>
+                    <h2 id="invoiceNo" class="text-[16px] font-black text-red-600 italic tracking-tight leading-none">---</h2>
+                    <p id="receiptDate" class="text-[11px] font-bold text-slate-400 mt-2.5 italic">--/--/----</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-2">Customer</p>
-                    <h2 id="custName" class="text-[12px] font-extrabold uppercase text-slate-900 leading-tight">---</h2>
-                    <p id="custPhone" class="text-[10px] phone-font font-bold text-slate-400 mt-1">---</p>
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Customer</p>
+                    <h2 id="custName" class="text-[13px] font-extrabold uppercase text-slate-900 leading-tight">---</h2>
+                    <p id="custPhone" class="text-[11px] phone-font font-bold text-slate-400 mt-1.5">---</p>
                 </div>
             </div>
 
-            <div class="flex items-center px-2 mb-4">
-                <p class="flex-1 text-[8px] font-black text-slate-300 uppercase tracking-widest">Repair Item</p>
-                <p class="w-10 text-center text-[8px] font-black text-slate-300 uppercase tracking-widest">Qty</p>
-                <p class="w-20 text-right text-[8px] font-black text-slate-300 uppercase tracking-widest">Price</p>
+            <div class="flex items-center px-2 mb-6 opacity-40">
+                <p class="flex-1 text-[9px] font-black uppercase tracking-[0.2em]">Service Description</p>
+                <p class="w-10 text-center text-[9px] font-black uppercase tracking-[0.2em]">Qty</p>
+                <p class="w-20 text-right text-[9px] font-black uppercase tracking-[0.2em]">Price</p>
             </div>
 
-            <div id="itemsList" class="space-y-4 mb-10">
+            <div id="itemsList" class="space-y-6 mb-12">
                 </div>
 
-            <div class="border-t border-slate-100 pt-8">
+            <div class="border-t border-slate-100 pt-10">
                 <div class="flex justify-between items-end">
                     <div class="flex-1">
-                        <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-2">Warranty Status</p>
-                        <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-3 py-1.5 rounded-xl font-black uppercase text-[9px]">
-                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-3">Warranty Term</p>
+                        <div class="inline-flex items-center gap-2.5 bg-blue-50 text-blue-600 px-4 py-2 rounded-xl font-black uppercase text-[10px] border border-blue-100/50">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i>
                             <span id="warrantyInfo">---</span>
                         </div>
                     </div>
                     <div class="text-right">
-                        <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Grand Total</p>
-                        <p class="text-3xl font-black text-slate-900 italic tracking-tighter leading-none">RM <span id="grandTotal">0.00</span></p>
+                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Grand Total</p>
+                        <p class="text-4xl font-black text-slate-900 italic tracking-tighter leading-none">RM <span id="grandTotal">0.00</span></p>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-12 pt-8 border-t border-dashed border-slate-100">
-                <h3 class="text-[9px] font-black uppercase text-slate-300 tracking-[0.2em] mb-4">Terms & Conditions:</h3>
-                <div class="text-[9px] text-slate-400 font-semibold leading-relaxed space-y-1.5">
-                    <p class="tnc-item">Original receipt required for all claims.</p>
-                    <p class="tnc-item">No refunds for completed services.</p>
-                    <p class="tnc-item">Not liable for data loss after repair.</p>
-                    <p class="tnc-item">Items left >30 days will be disposed.</p>
+            <div class="mt-14 pt-8 border-t border-dashed border-slate-200">
+                <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-5">Security & Terms:</h3>
+                <div class="text-[10px] text-slate-400 font-semibold leading-relaxed space-y-2">
+                    <p class="tnc-item">Resit asal diperlukan untuk sebarang tuntutan waranti.</p>
+                    <p class="tnc-item">Tiada pulangan wang bagi servis yang telah disiapkan.</p>
+                    <p class="tnc-item">Tidak bertanggungjawab atas kehilangan data semasa/selepas repair.</p>
+                    <p class="tnc-item">Barangan melebihi 30 hari akan dilupuskan secara automatik.</p>
                 </div>
             </div>
         </div>
 
-        <div class="text-center">
-            <p class="text-[9px] font-bold text-slate-400 italic mb-6 leading-relaxed px-4">
-                "Specialist in Hardware & Software Solutions. Fast, Reliable, Professional."
+        <div class="text-center px-10 pb-12">
+            <p class="text-[10px] font-bold text-slate-400 italic mb-8 leading-relaxed">
+                "Hardware Diagnosis, Software Restoration & Professional Consulting."
             </p>
-            <div class="h-px w-12 bg-slate-200 mx-auto mb-6"></div>
-            <p class="text-[8px] font-black text-slate-300 uppercase tracking-[0.4em]">Tasek Gelugor, Penang</p>
+            <div class="h-[2px] w-16 bg-slate-200 mx-auto mb-8"></div>
+            <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.5em]">Tasek Gelugor • Penang</p>
         </div>
     </div>
 
@@ -209,43 +224,43 @@
         async function loadInvoice() {
             const urlParams = new URLSearchParams(window.location.search);
             const id = urlParams.get('id');
-            if (!id) return document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500">ID ERROR</p>`;
+            if (!id) return document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 uppercase tracking-widest text-[10px]">ID Missing</p>`;
 
             try {
                 const doc = await db.collection("invoices").doc(id).get();
-                if (!doc.exists) return document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 tracking-widest uppercase text-[10px]">Invoice Not Found</p>`;
+                if (!doc.exists) return document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 tracking-widest uppercase text-[10px]">Invalid Receipt</p>`;
 
                 const data = doc.data();
                 document.getElementById('invoiceNo').innerText = data.invoiceNo || 'NX-SYSTEM';
                 document.getElementById('custName').innerText = data.customerName;
                 document.getElementById('custPhone').innerText = data.customerPhone;
                 document.getElementById('receiptDate').innerText = formatDate(data.createdAt);
-                document.getElementById('grandTotal').innerText = data.total;
+                document.getElementById('grandTotal').innerText = parseFloat(data.total).toFixed(2);
                 document.getElementById('warrantyInfo').innerText = data.warranty || 'No Warranty';
 
-                // --- LOGIC TRACKER PROGRESS ---
-                const currentStatus = data.repairStatus || 'Received';
+                // --- PROGRESS TRACKER LOGIC ---
+                const repairStatus = data.repairStatus || 'Received';
                 const steps = ['Received', 'Diagnosis', 'Repairing', 'Ready', 'Collected'];
-                const statusIdx = steps.indexOf(currentStatus);
+                const statusIdx = steps.indexOf(repairStatus);
                 
-                // Update Line (100% / 3 segment = 33.33% each)
                 const line = document.getElementById('progressLine');
+                // Calculate Width: 0->0%, 1->33%, 2->66%, 3->100%
                 if (statusIdx >= 0 && statusIdx < 4) {
                     line.style.width = (statusIdx * 33.33) + '%';
                 } else if (statusIdx >= 4) {
                     line.style.width = '100%';
                 }
 
-                // Update Icons
+                // Activate Icons
                 steps.slice(0, 4).forEach((s, idx) => {
                     const el = document.getElementById('step-' + s);
-                    if (idx <= statusIdx) {
+                    if (el && (idx <= statusIdx || statusIdx >= 4)) {
                         el.classList.add('step-active');
                         el.querySelector('i').classList.add('text-white');
                     }
                 });
 
-                // Badge & Stamp
+                // Badge & Stamp Logic
                 const badge = document.getElementById('statusBadge');
                 const stamp = document.getElementById('paidStamp');
                 
@@ -264,26 +279,30 @@
                 (data.items || []).forEach(item => {
                     const lineTotal = (parseFloat(item.kos) * parseFloat(item.qty)).toFixed(2);
                     itemsCont.insertAdjacentHTML('beforeend', `
-                        <div class="flex items-start px-2 py-3.5 border-b border-slate-50 last:border-0">
-                            <div class="flex-1 pr-4">
-                                <h4 class="text-[10px] font-extrabold uppercase text-slate-800 leading-tight">${item.name}</h4>
-                                ${item.desc ? `<p class="text-[8px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">${item.desc}</p>` : ''}
+                        <div class="flex items-start px-2 py-4 border-b border-slate-50 last:border-0 transition-all hover:bg-slate-50/50">
+                            <div class="flex-1 pr-6">
+                                <h4 class="text-[11px] font-extrabold uppercase text-slate-800 leading-tight">${item.name}</h4>
+                                ${item.desc ? `<p class="text-[9px] font-bold text-slate-400 mt-1.5 uppercase tracking-tighter italic">${item.desc}</p>` : ''}
                             </div>
                             <div class="w-10 text-center">
-                                <p class="text-[10px] font-black text-slate-900 phone-font">${item.qty}</p>
+                                <p class="text-[11px] font-black text-slate-900 phone-font">${item.qty}</p>
                             </div>
-                            <div class="w-20 text-right">
-                                <p class="text-[11px] font-black text-slate-900 phone-font">${lineTotal}</p>
-                                ${item.discount > 0 ? `<p class="text-[7px] font-black text-rose-500 mt-1 italic tracking-tighter">-RM ${item.discount}</p>` : ''}
+                            <div class="w-24 text-right">
+                                <p class="text-[12px] font-black text-slate-900 phone-font">RM ${lineTotal}</p>
+                                ${item.discount > 0 ? `<p class="text-[8px] font-black text-rose-500 mt-1.5 uppercase">-RM ${item.discount}</p>` : ''}
                             </div>
                         </div>
                     `);
                 });
 
+                // Final Reveal
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('receiptContent').classList.remove('hidden');
                 lucide.createIcons();
-            } catch (error) { document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500">SYSTEM ERROR</p>`; }
+            } catch (error) { 
+                console.error(error);
+                document.getElementById('loader').innerHTML = `<p class="font-black text-rose-500 uppercase text-[10px]">Database Error</p>`; 
+            }
         }
         window.onload = loadInvoice;
     </script>
